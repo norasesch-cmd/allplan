@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบจัดทำงบประมาณรายจ่ายประจำปี | เทศบาลเมืองดอนแก้ว</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+@font-face{font-family:'TH Sarabun New';src:local('TH Sarabun New'),local('THSarabunNew');font-weight:400;font-style:normal}
+@font-face{font-family:'TH Sarabun New';src:local('TH Sarabun New Bold'),local('THSarabunNew-Bold'),local('THSarabunNew Bold');font-weight:700;font-style:normal}
+:root{
+  --pri:#0D9488; --pri-d:#0B7A70; --pri-l:#14B8A6; --pri-bg:#F0FDFA;
+  --sec:#9333EA; --sec-bg:#FAF5FF; --ter:#EC4899; --ter-bg:#FDF2F8;
+  --bg:#F8FAFC; --surf:#FFFFFF;
+  --ok:#10B981; --warn:#F59E0B; --err:#EF4444; --info:#3B82F6;
+  --ink:#0F172A; --ink2:#334155; --mute:#64748B; --line:#E2E8F0; --line2:#F1F5F9;
+  --r:8px; --r-lg:12px; --r-xl:16px;
+  --sh:0 1px 2px rgba(15,23,42,.05),0 4px 16px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+.ms{font-family:'Material Symbols Rounded';font-size:20px;line-height:1;font-weight:normal;font-style:normal;display:inline-block;vertical-align:middle;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';user-select:none}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+#login{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 20% 20%,#14B8A6 0,transparent 40%),linear-gradient(135deg,#0B7A70 0%,#0D9488 45%,#9333EA 100%);z-index:50;padding:16px}
+.lg-card{background:#fff;border-radius:20px;padding:34px;width:min(430px,100%);box-shadow:0 25px 70px rgba(0,0,0,.3);display:grid;gap:10px}
+.lg-logo{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--pri-l),var(--sec));display:grid;place-items:center;color:#fff;margin-bottom:4px}
+.lg-logo .ms{font-size:34px}
+.lg-card h2{margin:0;font-size:21px}
+#lgMsg{color:var(--err);font-size:13.5px;min-height:18px}
+aside{width:262px;background:#0F172A;color:#CBD5E1;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:30;transition:transform .2s}
+.brand{padding:18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center}
+.brand .logo{width:42px;height:42px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--pri-l),var(--sec));display:grid;place-items:center;color:#fff}
+.brand b{color:#fff;font-size:15px;display:block;line-height:1.3}
+.brand small{color:#94A3B8;font-size:12px}
+.nav{padding:10px;flex:1;overflow:auto}
+.nav .sec-t{font-size:11px;letter-spacing:.08em;color:#64748B;padding:14px 12px 6px;text-transform:uppercase}
+.nav a{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:10px;color:#CBD5E1;text-decoration:none;cursor:pointer;margin-bottom:2px;font-weight:500}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav a.on{background:linear-gradient(90deg,rgba(20,184,166,.28),rgba(20,184,166,.04));color:#fff;box-shadow:inset 3px 0 0 var(--pri-l)}
+.side-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:13px}
+.side-foot b{color:#fff}
+.main{margin-left:262px;min-width:0}
+.topbar{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 24px;display:flex;align-items:center;gap:10px;z-index:20}
+.topbar h1{font-size:19px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#menuBtn{display:none}
+#view{padding:22px 24px 40px;max-width:1680px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh)}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
+.card h3 .ms{color:var(--pri)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.kpi:before{content:'';position:absolute;inset:0 auto 0 0;width:4px;background:var(--c,var(--pri))}
+.kpi .l{color:var(--mute);font-size:13px;display:flex;gap:6px;align-items:center}
+.kpi .v{font-size:22px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--mute);margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink2);padding:8px 14px;border-radius:var(--r);cursor:pointer;font-weight:500;white-space:nowrap;transition:.15s}
+.btn:hover{border-color:var(--pri-l);color:var(--pri-d)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri-d)}
+.btn.sec{background:var(--sec);border-color:var(--sec);color:#fff}.btn.sec:hover{filter:brightness(.92)}
+.btn.danger{color:var(--err);border-color:#FECACA}.btn.danger:hover{background:#FEF2F2}
+.btn.okb{color:#047857;border-color:#A7F3D0}.btn.okb:hover{background:#ECFDF5}
+.btn.sm{padding:4px 9px;font-size:13px}.btn.ic{padding:4px 6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.inp{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:var(--r);background:#fff;color:var(--ink);outline:none}
+.inp:focus{border-color:var(--pri-l);box-shadow:0 0 0 3px rgba(20,184,166,.15)}
+.inp:disabled{background:var(--line2);color:var(--mute)}
+input.num{text-align:right;font-variant-numeric:tabular-nums}
+label.f{display:block;font-size:13px;color:var(--ink2);font-weight:600;margin-bottom:4px}
+.fg{display:grid;gap:12px}
+.c2{grid-template-columns:repeat(2,1fr)}.c3{grid-template-columns:repeat(3,1fr)}
+.span2{grid-column:span 2}.full{grid-column:1/-1}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .inp{width:auto;min-width:150px}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:#fff;max-height:calc(100vh - 250px);box-shadow:var(--sh)}
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+table.t th{position:sticky;top:0;background:#F1F5F9;color:var(--ink2);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:2}
+table.t td{padding:8px 10px;border-bottom:1px solid var(--line2);vertical-align:top}
+table.t tbody tr:hover td{background:#FAFFFE}
+table.t tr.g1 td{background:#F8FAFC!important;font-weight:600}
+table.t tr.g0 td{background:var(--pri-bg)!important;font-weight:700;color:var(--pri-d)}
+table.t tr.dh td{background:var(--sec-bg)!important;font-weight:700;color:#6B21A8}
+table.t tr.chg td{background:#FFFBEB!important}
+table.t tr.rej td{opacity:.6}
+table.t tr.tot td{background:#0F172A!important;color:#fff;font-weight:700}
+.r{text-align:right!important;font-variant-numeric:tabular-nums}.c{text-align:center!important}
+.nw{white-space:nowrap}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-gray{background:#F1F5F9;color:#475569}.b-info{background:#DBEAFE;color:#1D4ED8}.b-ok{background:#D1FAE5;color:#047857}.b-warn{background:#FEF3C7;color:#B45309}.b-err{background:#FEE2E2;color:#B91C1C}.b-sec{background:var(--sec-bg);color:var(--sec)}
+.flag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:99px;margin:3px 4px 0 0;font-weight:600}
+.muted{color:var(--mute)}.small{font-size:12.5px}
+.hint{background:var(--sec-bg);border:1px solid #E9D5FF;color:#6B21A8;padding:10px 12px;border-radius:var(--r);font-size:13.5px}
+.warnbox{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;padding:10px 12px;border-radius:var(--r);font-size:13.5px}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.step{flex:1;min-width:110px;text-align:center;font-size:13px;padding:10px 6px;border-radius:10px;background:var(--line2);color:var(--mute)}
+.step.done{background:var(--pri-bg);color:var(--pri-d);font-weight:600}
+.step.cur{background:linear-gradient(135deg,var(--pri),var(--sec));color:#fff;font-weight:700}
+.chk{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}.chk:last-child{border:none}
+.chk .ms{font-size:22px}.chk.ok>.ms{color:var(--ok)}.chk.warn>.ms{color:var(--warn)}.chk.err>.ms{color:var(--err)}.chk.info>.ms{color:var(--info)}
+.chk b{display:block}
+.mode{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600}
+.mode.fb{background:#D1FAE5;color:#047857}.mode.lc{background:#FEF3C7;color:#B45309}
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--line2);padding:5px 10px;border-radius:999px;font-size:13px}
+.proj{font-weight:600}.desc{color:var(--mute);font-size:12.5px;margin-top:2px;white-space:pre-line;max-width:420px}
+.bar{height:8px;border-radius:99px;background:var(--line2);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--sec))}
+.apv-in{width:140px!important;min-width:0!important;padding:5px 8px;font-weight:700;color:var(--pri-d)}
+.sticky-k{position:sticky;top:57px;z-index:15;background:var(--bg);padding:2px 0 12px}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;place-items:center;z-index:100;padding:16px}
+.mask.on{display:grid}
+.mdl{background:#fff;border-radius:var(--r-xl);width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,.3)}
+.mdl.wide{width:min(1000px,100%)}
+.mdl-h{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.mdl-h h3{margin:0;flex:1;font-size:17px}
+.mdl-b{padding:20px;overflow:auto}
+.mdl-f{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+#toast{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:300}
+.tst{background:#0F172A;color:#fff;padding:11px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);min-width:240px;max-width:440px;animation:tin .25s}
+.tst.ok{background:var(--pri-d)}.tst.err{background:var(--err)}.tst.warn{background:#D97706}
+@keyframes tin{from{transform:translateY(10px);opacity:0}}
+#busy{position:fixed;inset:0;background:rgba(255,255,255,.55);display:none;place-items:center;z-index:250}
+#busy.on{display:grid}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--pri-bg);border-top-color:var(--pri);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.page{background:#fff;width:210mm;min-height:297mm;margin:0 auto 18px;padding:15mm 13mm 13mm 20mm;box-shadow:0 4px 22px rgba(0,0,0,.12)}
+@page{size:A4;margin:15mm 13mm 13mm 20mm}
+@media print{
+  body{background:#fff}
+  aside,.topbar,.no-print,#toast,#login,.mask{display:none!important}
+  .main{margin:0}#view{padding:0;max-width:none}
+  .page{box-shadow:none;margin:0;padding:0;width:auto;min-height:0;page-break-after:always}
+  .page:last-child{page-break-after:auto}
+  table.ngt tr{page-break-inside:avoid}
+}
+@media(max-width:1100px){.grid2,.grid3{grid-template-columns:1fr}}
+@media(max-width:960px){
+  aside{transform:translateX(-100%)}aside.open{transform:none}
+  .main{margin-left:0}#menuBtn{display:inline-flex}
+  .c3{grid-template-columns:1fr 1fr}#view{padding:16px}
+  .page{width:100%;padding:8mm}
+}
+</style>
+<style id="thfUrl"></style>
+<style id="ngpStyle"></style>
+</head>
+<body>
+
+<div id="login">
+  <form class="lg-card" id="lgForm" autocomplete="on">
+    <div class="lg-logo"><span class="ms">account_balance</span></div>
+    <h2>ระบบจัดทำงบประมาณรายจ่ายประจำปี</h2>
+    <div class="muted" style="margin-top:-6px">เทศบาลเมืองดอนแก้ว อำเภอแม่ริม จังหวัดเชียงใหม่</div>
+    <div style="margin-top:8px"><label class="f">ชื่อผู้ใช้</label><input class="inp" id="lgU" autocomplete="username" required></div>
+    <div><label class="f">รหัสผ่าน</label><input class="inp" id="lgP" type="password" autocomplete="current-password" required></div>
+    <button class="btn pri" id="lgBtn" style="justify-content:center;padding:11px"><span class="ms">login</span>เข้าสู่ระบบ</button>
+    <div id="lgMsg"></div>
+    <div id="lgMode" class="small muted"></div>
+    <a id="lgSetup" href="#" hidden class="small">ตั้งค่าผู้ดูแลระบบครั้งแรก</a>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <aside id="side">
+    <div class="brand"><div class="logo"><span class="ms">account_balance</span></div>
+      <div><b>e-Budget ดอนแก้ว</b><small>ระบบจัดทำงบประมาณรายจ่ายประจำปี</small></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot" id="sideFoot"></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="btn ic" id="menuBtn" onclick="document.getElementById('side').classList.toggle('open')"><span class="ms">menu</span></button>
+      <h1 id="vTitle">ภาพรวม</h1>
+      <span id="modeBadge"></span>
+      <label class="small muted">ปีงบประมาณ</label>
+      <select class="inp" id="yearSel" style="width:auto" onchange="App.changeYear(+this.value)"></select>
+      <button class="btn ic" title="โหลดข้อมูลใหม่" onclick="App.refresh()"><span class="ms">refresh</span></button>
+      <span class="chip" id="userChip"></span>
+      <button class="btn ic" title="ออกจากระบบ" onclick="App.logout()"><span class="ms">logout</span></button>
+    </div>
+    <section id="view"></section>
+  </div>
+</div>
+
+<div class="mask" id="mask"><div class="mdl" id="mdl">
+  <div class="mdl-h"><h3 id="mTitle"></h3><button class="btn ic" onclick="App.closeModal()"><span class="ms">close</span></button></div>
+  <div class="mdl-b" id="mBody"></div>
+  <div class="mdl-f"><button class="btn" id="mCancel" onclick="App.closeModal()">ปิด</button><button class="btn pri" id="mOk">บันทึก</button></div>
+</div></div>
+<div id="busy"><div class="spin"></div></div>
+<div id="toast"></div>
+<input type="file" id="fileIn" hidden>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc, query, where, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ===================== 1.1 FIREBASE CONFIG ===================== */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyAkVLAI8eD3O2ZoEGBE-rR6m_94jcDMQzw",
+  authDomain:        "donkaeo-budget-transfer.firebaseapp.com",
+  projectId:         "donkaeo-budget-transfer",
+  storageBucket:     "donkaeo-budget-transfer.firebasestorage.app",
+  messagingSenderId: "319826008155",
+  appId:             "1:319826008155:web:47ef923996f9da96d9c77e"
+};
+const COL = { years:'budget_years', rev:'budget_revenues', prop:'budget_proposals', set:'budget_settings', users:'users' };
+
+/* ===================== MASTER DATA ===================== */
+const PLANS = {
+  "แผนงานบริหารงานทั่วไป":["งานบริหารทั่วไป","งานวางแผนสถิติและวิชาการ","งานบริหารงานคลัง","งานควบคุมภายในและการตรวจสอบภายใน","งานสารสนเทศ"],
+  "แผนงานการรักษาความสงบภายใน":["งานบริหารทั่วไปเกี่ยวกับการรักษาความสงบภายใน","งานเทศกิจ","งานป้องกันและบรรเทาสาธารณภัย","งานจราจร"],
+  "แผนงานการศึกษา":["งานบริหารทั่วไปเกี่ยวกับการศึกษา","งานระดับก่อนวัยเรียนและประถมศึกษา","งานระดับมัธยมศึกษา","งานศึกษาไม่กำหนดระดับ"],
+  "แผนงานสาธารณสุข":["งานบริหารทั่วไปเกี่ยวกับสาธารณสุข","งานโรงพยาบาล","งานบริการสาธารณสุขและงานสาธารณสุขอื่น","งานศูนย์บริการสาธารณสุข"],
+  "แผนงานสังคมสงเคราะห์":["งานบริหารทั่วไปเกี่ยวกับสังคมสงเคราะห์","งานสวัสดิการสังคมและสังคมสงเคราะห์"],
+  "แผนงานเคหะและชุมชน":["งานบริหารทั่วไปเกี่ยวกับเคหะและชุมชน","งานไฟฟ้าและประปา","งานสวนสาธารณะ","งานกำจัดขยะมูลฝอยและสิ่งปฏิกูล","งานบำบัดน้ำเสีย"],
+  "แผนงานสร้างความเข้มแข็งของชุมชน":["งานบริหารทั่วไปเกี่ยวกับสร้างความเข้มแข็งของชุมชน","งานส่งเสริมและสนับสนุนความเข้มแข็งชุมชน"],
+  "แผนงานการศาสนา วัฒนธรรม และนันทนาการ":["งานบริหารทั่วไปเกี่ยวกับศาสนาวัฒนธรรมและนันทนาการ","งานกีฬาและนันทนาการ","งานศาสนาวัฒนธรรมท้องถิ่น","งานวิชาการวางแผนและส่งเสริมการท่องเที่ยว"],
+  "แผนงานอุตสาหกรรมและการโยธา":["งานบริหารทั่วไปเกี่ยวกับอุตสาหกรรมและการโยธา","งานก่อสร้าง"],
+  "แผนงานการเกษตร":["งานส่งเสริมการเกษตร","งานสิ่งแวดล้อมและทรัพยากรธรรมชาติ"],
+  "แผนงานการพาณิชย์":["งานกิจการสถานธนานุบาล","งานกิจการประปา","งานตลาดสด","งานโรงฆ่าสัตว์","งานกิจการสถานีขนส่ง/กิจการท่าเรือ","งานกิจการพาณิชย์อื่น ๆ"],
+  "แผนงานงบกลาง":["งบกลาง"]
+};
+const SIDES = {
+  "ด้านบริหารทั่วไป":["แผนงานบริหารงานทั่วไป","แผนงานการรักษาความสงบภายใน"],
+  "ด้านบริการชุมชนและสังคม":["แผนงานการศึกษา","แผนงานสาธารณสุข","แผนงานสังคมสงเคราะห์","แผนงานเคหะและชุมชน","แผนงานสร้างความเข้มแข็งของชุมชน","แผนงานการศาสนา วัฒนธรรม และนันทนาการ"],
+  "ด้านการเศรษฐกิจ":["แผนงานอุตสาหกรรมและการโยธา","แผนงานการเกษตร","แผนงานการพาณิชย์"],
+  "ด้านการดำเนินงานอื่น":["แผนงานงบกลาง"]
+};
+const BUDGET = {
+  "งบบุคลากร":{
+    "เงินเดือน (ฝ่ายการเมือง)":["เงินเดือนนายก/รองนายกองค์กรปกครองส่วนท้องถิ่น","ค่าตอบแทนประจำตำแหน่งนายก/รองนายก","ค่าตอบแทนพิเศษนายก/รองนายก","ค่าตอบแทนรายเดือนเลขานุการ/ที่ปรึกษานายกเทศมนตรี นายกองค์การบริหารส่วนตำบล","เงินค่าตอบแทนประธานสภา/รองประธานสภา/สมาชิกสภา/เลขานุการสภาองค์กรปกครองส่วนท้องถิ่น"],
+    "เงินเดือน (ฝ่ายประจำ)":["เงินเดือนข้าราชการ หรือพนักงานส่วนท้องถิ่น","เงินเพิ่มต่าง ๆ ของข้าราชการ หรือพนักงานส่วนท้องถิ่น","เงินเดือนพนักงานถ่ายโอน","เงินเพิ่มต่าง ๆ ของพนักงานถ่ายโอน","เงินประจำตำแหน่ง","ค่าจ้างลูกจ้างประจำ","เงินเพิ่มต่าง ๆ ของลูกจ้างประจำ","ค่าตอบแทนพนักงานจ้าง","เงินเพิ่มต่าง ๆ ของพนักงานจ้าง","เงินวิทยฐานะ"]
+  },
+  "งบดำเนินงาน":{
+    "ค่าตอบแทน":["ค่าตอบแทนผู้ปฏิบัติราชการอันเป็นประโยชน์แก่องค์กรปกครองส่วนท้องถิ่น","ค่าตอบแทนการปฏิบัติงานนอกเวลาราชการ","ค่าเช่าบ้าน","เงินช่วยเหลือการศึกษาบุตร","ค่าเบี้ยประชุม"],
+    "ค่าใช้สอย":["รายจ่ายเพื่อให้ได้มาซึ่งบริการ","รายจ่ายเกี่ยวกับการรับรองและพิธีการ","รายจ่ายเกี่ยวเนื่องกับการปฏิบัติราชการที่ไม่เข้าลักษณะรายจ่ายงบรายจ่ายอื่น ๆ","ค่าบำรุงรักษาและซ่อมแซม"],
+    "ค่าวัสดุ":["วัสดุสำนักงาน","วัสดุไฟฟ้าและวิทยุ","วัสดุงานบ้านงานครัว","วัสดุก่อสร้าง","วัสดุยานพาหนะและขนส่ง","วัสดุเชื้อเพลิงและหล่อลื่น","วัสดุวิทยาศาสตร์หรือการแพทย์","วัสดุการเกษตร","วัสดุโฆษณาและเผยแพร่","วัสดุเครื่องแต่งกาย","วัสดุกีฬา","วัสดุคอมพิวเตอร์","วัสดุการศึกษา","วัสดุเครื่องดับเพลิง","วัสดุจราจร","วัสดุสนาม","วัสดุสำรวจ","วัสดุอื่น"],
+    "ค่าสาธารณูปโภค":["ค่าไฟฟ้า","ค่าน้ำประปา ค่าน้ำบาดาล","ค่าบริการโทรศัพท์","ค่าบริการไปรษณีย์","ค่าบริการสื่อสารและโทรคมนาคม","ค่าเช่าพื้นที่เว็บไซต์ และค่าธรรมเนียมที่เกี่ยวข้อง"]
+  },
+  "งบลงทุน":{
+    "ค่าครุภัณฑ์":["ครุภัณฑ์สำนักงาน","ครุภัณฑ์การศึกษา","ครุภัณฑ์ยานพาหนะและขนส่ง","ครุภัณฑ์การเกษตร","ครุภัณฑ์ก่อสร้าง","ครุภัณฑ์ไฟฟ้าและวิทยุ","ครุภัณฑ์โฆษณาและเผยแพร่","ครุภัณฑ์วิทยาศาสตร์หรือการแพทย์","ครุภัณฑ์งานบ้านงานครัว","ครุภัณฑ์โรงงาน","ครุภัณฑ์กีฬา","ครุภัณฑ์สำรวจ","ครุภัณฑ์ดนตรีและนาฏศิลป์","ครุภัณฑ์คอมพิวเตอร์หรืออิเล็กทรอนิกส์","ครุภัณฑ์สนาม","ครุภัณฑ์อื่น"],
+    "ค่าที่ดินและสิ่งก่อสร้าง":["ค่าก่อสร้างอาคาร หรือสิ่งปลูกสร้างต่าง ๆ","ค่าก่อสร้างสิ่งสาธารณูปโภค","ค่าก่อสร้างสิ่งสาธารณูปการ","ค่าปรับปรุงที่ดินและสิ่งก่อสร้าง","ค่าชดเชยสัญญาแบบปรับราคาได้ (ค่า K)","ค่าซื้อหรือแลกเปลี่ยนที่ดิน","ค่าชดเชยผลอาสิน","ค่าติดตั้งระบบไฟฟ้าและอุปกรณ์","ค่าติดตั้งระบบประปาและอุปกรณ์"]
+  },
+  "งบเงินอุดหนุน":{
+    "เงินอุดหนุน":["เงินอุดหนุนองค์กรปกครองส่วนท้องถิ่น","เงินอุดหนุนส่วนราชการ","เงินอุดหนุนรัฐวิสาหกิจ","เงินอุดหนุนองค์กรประชาชน","เงินอุดหนุนขององค์กรศาสนา","เงินอุดหนุนองค์กรการกุศล","เงินอุดหนุนกิจการที่เป็นสาธารณประโยชน์"]
+  },
+  "งบรายจ่ายอื่น":{ "รายจ่ายอื่น":["ค่าจ้างที่ปรึกษาเพื่อศึกษา วิจัย ประเมินผล","รายจ่ายอื่น ๆ"] },
+  "งบกลาง":{
+    "งบกลาง":["ค่าชำระหนี้เงินต้น","ค่าชำระดอกเบี้ย","เงินสมทบกองทุนประกันสังคม","เงินสมทบกองทุนเงินทดแทน","เบี้ยยังชีพผู้สูงอายุ","เบี้ยยังชีพความพิการ","เบี้ยยังชีพผู้ป่วยเอดส์","เงินสำรองจ่าย","รายจ่ายตามข้อผูกพัน","เงินสมทบกองทุนบำเหน็จบำนาญข้าราชการส่วนท้องถิ่น (ก.บ.ท.)","เงินช่วยค่าครองชีพผู้รับบำนาญ (ช.ค.บ.)","เงินบำเหน็จบำนาญข้าราชการถ่ายโอน","เงินกองทุนบำเหน็จบำนาญข้าราชการ (กบข.)","ค่าเช่าที่ธรณีสงฆ์ (วัดปิยาราม)","เงินสมทบกองทุนสวัสดิการชุมชนตำบลดอนแก้ว","เงินสมทบกองทุนหลักประกันสุขภาพระดับตำบลดอนแก้ว","เงินสมทบค่าบริการสาธารณสุขสำหรับผู้ที่มีภาวะพึ่งพิงในชุมชน","เงินช่วยพิเศษ"]
+  }
+};
+const DEPTS = ["สำนักปลัดเทศบาล","กองคลัง","กองช่าง","กองสาธารณสุขและสิ่งแวดล้อม","กองการศึกษา","กองสวัสดิการสังคม","กองยุทธศาสตร์และงบประมาณ","หน่วยตรวจสอบภายใน"];
+const DEF_SIGNERS = {
+  analystName:"นายนรเศรษฐ์ ชุมถนอม", analystTitle:"นักวิเคราะห์นโยบายและแผน",
+  finDirName:"นางสาวสุปวีณ์ ศรีโสดา", finDirTitle:"ผู้อำนวยการกองคลัง",
+  clerkName:"นายวิชาติ นาวาพิสุทธิ์", clerkTitle:"ปลัดเทศบาลเมืองดอนแก้ว",
+  mayorName:"นายพลากร กันธวัง", mayorTitle:"นายกเทศมนตรีเมืองดอนแก้ว",
+  govName:"นายชัชวาลย์ ปัญญา", govTitle:"รองผู้ว่าราชการจังหวัด รักษาราชการแทน ผู้ว่าราชการจังหวัดเชียงใหม่"
+};
+/* ผู้เสนอขอตั้งงบประมาณ (ลงนามใน งป.1 / งป.2) รายส่วนราชการ */
+const DEF_DEPT_SIGNERS = { "หน่วยตรวจสอบภายใน": { name:"นางสาวสิรินาถ  อินทสโร", title:"นักวิชาการตรวจสอบภายในชำนาญการ" } };
+const REV = {
+  "รายได้จัดเก็บเอง":{
+    "หมวดภาษีอากร":["ภาษีที่ดินและสิ่งปลูกสร้าง","ภาษีป้าย"],
+    "หมวดค่าธรรมเนียม ค่าปรับ และใบอนุญาต":["ค่าธรรมเนียมเกี่ยวกับใบอนุญาตการขายสุรา","ค่าธรรมเนียมเก็บและขนมูลฝอย","ค่าธรรมเนียมเก็บขนสิ่งปฏิกูล","ค่าธรรมเนียมเกี่ยวกับการควบคุมอาคาร","ค่าธรรมเนียมเกี่ยวกับทะเบียนพาณิชย์","ค่าธรรมเนียมอื่น ๆ","ค่าปรับผู้กระทำผิดกฎหมายจราจรทางบก","ค่าปรับการผิดสัญญา","ค่าใบอนุญาตประกอบการค้าสำหรับกิจการที่เป็นอันตรายต่อสุขภาพ","ค่าใบอนุญาตจำหน่ายสินค้าในที่หรือทางสาธารณะ","ค่าใบอนุญาตเกี่ยวกับการควบคุมอาคาร","ค่าใบอนุญาตอื่น ๆ"],
+    "หมวดรายได้จากทรัพย์สิน":["ค่าเช่าหรือบริการสถานที่","ดอกเบี้ย"],
+    "หมวดรายได้จากสาธารณูปโภคและการพาณิชย์":["รายได้จากสาธารณูปโภคและการพาณิชย์อื่น ๆ"],
+    "หมวดรายได้เบ็ดเตล็ด":["ค่าขายแบบแปลน","ค่ารับรองสำเนาและถ่ายเอกสาร","รายได้เบ็ดเตล็ดอื่น ๆ"],
+    "หมวดรายได้จากทุน":["ค่าขายทอดตลาดทรัพย์สิน"]
+  },
+  "รายได้ที่รัฐบาลเก็บแล้วจัดสรรให้องค์กรปกครองส่วนท้องถิ่น":{
+    "หมวดภาษีจัดสรร":["ภาษีมูลค่าเพิ่มตาม พ.ร.บ. กำหนดแผนฯ","ภาษีมูลค่าเพิ่มตาม พ.ร.บ. จัดสรรรายได้ฯ","ภาษีธุรกิจเฉพาะ","ภาษีสรรพสามิต","ค่าภาคหลวงแร่","ค่าภาคหลวงปิโตรเลียม","ค่าธรรมเนียมจดทะเบียนสิทธิและนิติกรรมตามประมวลกฎหมายที่ดิน","ภาษีจัดสรรอื่น ๆ"]
+  },
+  "รายได้ที่รัฐบาลอุดหนุนให้องค์กรปกครองส่วนท้องถิ่น":{ "หมวดเงินอุดหนุนทั่วไป":["เงินอุดหนุนทั่วไป"] }
+};
+const DEPT_DEFAULT = {
+  "สำนักปลัดเทศบาล":["แผนงานบริหารงานทั่วไป","งานบริหารทั่วไป"],
+  "กองคลัง":["แผนงานบริหารงานทั่วไป","งานบริหารงานคลัง"],
+  "กองช่าง":["แผนงานอุตสาหกรรมและการโยธา","งานบริหารทั่วไปเกี่ยวกับอุตสาหกรรมและการโยธา"],
+  "กองสาธารณสุขและสิ่งแวดล้อม":["แผนงานสาธารณสุข","งานบริหารทั่วไปเกี่ยวกับสาธารณสุข"],
+  "กองการศึกษา":["แผนงานการศึกษา","งานบริหารทั่วไปเกี่ยวกับการศึกษา"],
+  "กองสวัสดิการสังคม":["แผนงานสังคมสงเคราะห์","งานบริหารทั่วไปเกี่ยวกับสังคมสงเคราะห์"],
+  "กองยุทธศาสตร์และงบประมาณ":["แผนงานบริหารงานทั่วไป","งานวางแผนสถิติและวิชาการ"],
+  "หน่วยตรวจสอบภายใน":["แผนงานบริหารงานทั่วไป","งานควบคุมภายในและการตรวจสอบภายใน"]
+};
+const FUNDS = ["เงินรายได้","เงินอุดหนุนทั่วไป","เงินอุดหนุนทั่วไป (กำหนดวัตถุประสงค์)","เงินอุดหนุนเฉพาะกิจ"];
+const ST = { draft:{t:'ร่าง',c:'gray'}, submitted:{t:'ส่งพิจารณา',c:'info'}, revise:{t:'ส่งกลับแก้ไข',c:'warn'}, approved:{t:'อนุมัติแล้ว',c:'ok'}, rejected:{t:'ไม่อนุมัติ',c:'err'} };
+const YST = [['preparing','จัดทำคำขอ'],['reviewing','พิจารณา/อนุมัติคำขอ'],['council','เสนอสภาฯ'],['council_ok','สภาฯ เห็นชอบ'],['governor_ok','ผู้ว่าฯ อนุมัติ'],['promulgated','ประกาศใช้']];
+const ROLES = { admin:'ผู้ดูแลระบบ', budget:'เจ้าหน้าที่งบประมาณ', dept:'ส่วนราชการ', viewer:'ผู้บริหาร/ดูอย่างเดียว' };
+const GORDER = ["งบกลาง","งบบุคลากร","งบดำเนินงาน","งบลงทุน","งบรายจ่ายอื่น","งบเงินอุดหนุน"];
+const PLAN_ORDER = Object.keys(PLANS), SIDE_ORDER = Object.keys(SIDES);
+const PALETTE = ['#0D9488','#9333EA','#EC4899','#3B82F6','#F59E0B','#10B981','#64748B','#14B8A6','#A855F7','#F43F5E','#0EA5E9','#84CC16'];
+const PROTECT_G = ['งบบุคลากร','งบกลาง'];
+
+/* ===================== AUTO-MATCH ===================== */
+const TYPE_IDX = {}, WORK_IDX = {};
+for (const g in BUDGET) for (const c in BUDGET[g]) for (const t of BUDGET[g][c]) TYPE_IDX[t] = { group:g, cat:c };
+for (const p of PLAN_ORDER) for (const w of PLANS[p]) WORK_IDX[w] = p;
+const sideOf = plan => SIDE_ORDER.find(s => SIDES[s].includes(plan)) || '';
+function autoMatch(p){
+  if (p.type && TYPE_IDX[p.type]) { p.group = TYPE_IDX[p.type].group; p.cat = TYPE_IDX[p.type].cat; }
+  if (p.group === 'งบกลาง') { p.plan = 'แผนงานงบกลาง'; p.work = 'งบกลาง'; }
+  if (p.work && WORK_IDX[p.work] && !(PLANS[p.plan]||[]).includes(p.work)) p.plan = WORK_IDX[p.work];
+  if (p.plan) p.side = sideOf(p.plan);
+  return p;
+}
+const KW = [
+  [/ค่า\s*K|ค่าเค|ปรับราคาได้/,'ค่าชดเชยสัญญาแบบปรับราคาได้ (ค่า K)'],
+  [/ขยายเขต.*ไฟฟ้า|ติดตั้ง.*(ไฟฟ้า|โคมไฟ|ไฟส่องสว่าง)/,'ค่าติดตั้งระบบไฟฟ้าและอุปกรณ์'],
+  [/ขยายเขต.*ประปา|ติดตั้ง.*ประปา/,'ค่าติดตั้งระบบประปาและอุปกรณ์'],
+  [/ก่อสร้าง.*(ถนน|ท่อ|ราง|สะพาน|ฝาย|ลำเหมือง|คสล|ค\.ส\.ล|ประปา|บ่อ)/,'ค่าก่อสร้างสิ่งสาธารณูปโภค'],
+  [/ก่อสร้าง.*(อาคาร|รั้ว|ห้องน้ำ|ศาลา|โรงจอด|ที่พัก|ซุ้ม)/,'ค่าก่อสร้างอาคาร หรือสิ่งปลูกสร้างต่าง ๆ'],
+  [/ปรับปรุง|ซ่อมสร้าง|ปูผิว|เสริมผิว|ภูมิทัศน์/,'ค่าปรับปรุงที่ดินและสิ่งก่อสร้าง'],
+  [/ซื้อที่ดิน/,'ค่าซื้อหรือแลกเปลี่ยนที่ดิน'],
+  [/วัสดุ.*คอมพิวเตอร์|หมึก|โทนเนอร์/,'วัสดุคอมพิวเตอร์'],
+  [/เครื่องคอมพิวเตอร์|โน้ตบุ๊ก|โน๊ตบุ๊ก|notebook|เครื่องพิมพ์|สแกนเนอร์|เครื่องสำรองไฟ|\bUPS\b/i,'ครุภัณฑ์คอมพิวเตอร์หรืออิเล็กทรอนิกส์'],
+  [/รถยนต์|รถจักรยานยนต์|รถบรรทุก|รถกระบะ|รถตู้/,'ครุภัณฑ์ยานพาหนะและขนส่ง'],
+  [/เครื่องปรับอากาศ|โต๊ะ|เก้าอี้|ตู้เหล็ก|ตู้เก็บเอกสาร|เครื่องถ่ายเอกสาร/,'ครุภัณฑ์สำนักงาน'],
+  [/กล้องถ่ายภาพ|โปรเจ[คก]เตอร์|จอรับภาพ|เครื่องขยายเสียง|ลำโพง/,'ครุภัณฑ์โฆษณาและเผยแพร่'],
+  [/เครื่องตัดหญ้า|เครื่องสูบน้ำ/,'ครุภัณฑ์การเกษตร'],
+  [/น้ำมันเชื้อเพลิง|น้ำมันดีเซล|น้ำมันเบนซิน|แก๊สโซฮอล์|หล่อลื่น/,'วัสดุเชื้อเพลิงและหล่อลื่น'],
+  [/อาหารเสริม\s*\(?นม/,'วัสดุงานบ้านงานครัว'],
+  [/ทรายอะเบท|เคมีภัณฑ์|เวชภัณฑ์|วัคซีน|คลอรีน/,'วัสดุวิทยาศาสตร์หรือการแพทย์'],
+  [/ไวนิล|แผ่นพับ/,'วัสดุโฆษณาและเผยแพร่'],
+  [/กระดาษ|แฟ้ม|เครื่องเขียน/,'วัสดุสำนักงาน'],
+  [/อินเ[ทต]อร์เน็ต|ไฟเบอร์|สื่อสาร/,'ค่าบริการสื่อสารและโทรคมนาคม'],
+  [/เว็บไซต์|โดเมน|โฮสติ้ง/,'ค่าเช่าพื้นที่เว็บไซต์ และค่าธรรมเนียมที่เกี่ยวข้อง'],
+  [/ค่าน้ำ/,'ค่าน้ำประปา ค่าน้ำบาดาล'],
+  [/ซ่อมแซม|บำรุงรักษา/,'ค่าบำรุงรักษาและซ่อมแซม'],
+  [/รับรอง|พิธีเปิด|พิธีการ/,'รายจ่ายเกี่ยวกับการรับรองและพิธีการ'],
+  [/จ้างเหมา|ค่าธรรมเนียม|เบี้ยประกัน|ค่าโฆษณา|ค่าถ่ายเอกสาร/,'รายจ่ายเพื่อให้ได้มาซึ่งบริการ'],
+  [/อุดหนุน.*(เทศบาล|อบต|อบจ|องค์การบริหารส่วน|ปกครองส่วนท้องถิ่น)/,'เงินอุดหนุนองค์กรปกครองส่วนท้องถิ่น'],
+  [/อุดหนุน.*(อำเภอ|จังหวัด|โรงเรียน|ที่ทำการปกครอง|สพฐ|ส่วนราชการ|อาหารกลางวัน)/,'เงินอุดหนุนส่วนราชการ'],
+  [/อุดหนุน.*(วัด|ศาสนา)/,'เงินอุดหนุนขององค์กรศาสนา'],
+  [/อุดหนุน.*(ชุมชน|กลุ่ม|คณะกรรมการ|อสม)/,'เงินอุดหนุนองค์กรประชาชน'],
+  [/นอกเวลา|ล่วงเวลา/,'ค่าตอบแทนการปฏิบัติงานนอกเวลาราชการ'],
+  [/เช่าบ้าน/,'ค่าเช่าบ้าน'],
+  [/เดินทางไปราชการ|ฝึกอบรม|ลงทะเบียน|สัมมนา|เลือกตั้ง|จัดงาน|แข่งขัน|โครงการ/,'รายจ่ายเกี่ยวเนื่องกับการปฏิบัติราชการที่ไม่เข้าลักษณะรายจ่ายงบรายจ่ายอื่น ๆ']
+];
+const TYPE_NAMES = Object.keys(TYPE_IDX).sort((a,b)=>b.length-a.length);
+function suggestType(text){
+  const s = String(text||'');
+  for (const n of TYPE_NAMES) if (n.length > 6 && s.includes(n)) return n;
+  for (const [re,t] of KW) if (re.test(s)) return t;
+  return null;
+}
+
+/* ===================== UTILITIES ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(String(v ?? '').replace(/,/g,'')); return isFinite(n) ? n : 0; };
+const isF = v => v !== null && v !== undefined && v !== '';
+const f2 = n => num(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fz = n => Math.abs(num(n)) < 0.005 ? '-' : f2(n);
+const fa = v => isF(v) ? fz(v) : '<span class="small" style="color:#B45309">ยังไม่กรอก</span>';
+const fM = n => (num(n)/1e6).toLocaleString('th-TH',{maximumFractionDigits:2}) + ' ลบ.';
+const pct = (a,b) => num(b) ? (num(a)-num(b))/num(b)*100 : null;
+const pz = (a,b) => { const p = pct(a,b); return p===null ? '-' : p.toFixed(2); };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,9);
+const nowISO = () => new Date().toISOString();
+const idx = (a,v) => { const i = a.indexOf(v); return i < 0 ? 999 : i; };
+const sumBy = (arr,fn) => arr.reduce((a,x) => a + fn(x), 0);
+const opts = (arr,sel) => arr.map(v => `<option ${v===sel?'selected':''}>${esc(v)}</option>`).join('');
+const TH_M = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const thDate = d => { const x = new Date(d); return `${x.getDate()} ${TH_M[x.getMonth()]} พ.ศ. ${x.getFullYear()+543}`; };
+async function sha256(t){
+  if (!crypto?.subtle) throw new Error('เบราว์เซอร์ไม่รองรับการเข้ารหัส (ต้องเปิดผ่าน https หรือ localhost)');
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+function toast(m,t='ok'){ const d=document.createElement('div'); d.className='tst '+t; d.textContent=m; $('#toast').append(d); setTimeout(()=>d.remove(),3800); }
+async function busy(fn){ $('#busy').classList.add('on'); try { return await fn(); } catch(e){ console.error(e); toast(e.message||String(e),'err'); } finally { $('#busy').classList.remove('on'); } }
+function download(name,content,type){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
+function pickFile(accept){ return new Promise(res=>{ const f=$('#fileIn'); f.value=''; f.accept=accept; f.onchange=()=>{ const file=f.files[0]; if(!file) return res(null); const r=new FileReader(); r.onload=()=>res(r.result); r.readAsText(file,'utf-8'); }; f.click(); }); }
+function parseCSV(t){ const rows=[]; let r=[],f='',q=false; t=t.replace(/^\uFEFF/,'');
+  for(let i=0;i<t.length;i++){ const c=t[i];
+    if(q){ if(c==='"'){ if(t[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true; else if(c===','){ r.push(f); f=''; } else if(c==='\n'){ r.push(f); rows.push(r); r=[]; f=''; } else if(c!=='\r') f+=c; }
+  if(f||r.length){ r.push(f); rows.push(r); } return rows; }
+const csvCell = v => { const s=String(v??''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+
+/* ===================== DATA LAYER ===================== */
+const USE_FB = !/\*/.test(FIREBASE_CONFIG.apiKey);
+let fdb = null;
+if (USE_FB) { try { fdb = getFirestore(initializeApp(FIREBASE_CONFIG)); } catch(e){ console.error('Firebase init failed', e); } }
+const clean = o => { const r={}; for (const k in o) if (k!=='id' && !k.startsWith('_') && o[k]!==undefined) r[k]=o[k]; return r; };
+const LocalDB = {
+  k: c => 'dkb2_' + c,
+  all(c){ return JSON.parse(localStorage.getItem(this.k(c)) || '{}'); },
+  save(c,o){ localStorage.setItem(this.k(c), JSON.stringify(o)); },
+  async list(c,f){ return Object.entries(this.all(c)).map(([id,v])=>({id,...v})).filter(r=>!f||Object.entries(f).every(([k,v])=>r[k]===v)); },
+  async any(c){ return Object.keys(this.all(c)).length > 0; },
+  async get(c,id){ const o=this.all(c); return o[id] ? {id,...o[id]} : null; },
+  async set(c,id,d,merge=true){ const o=this.all(c); o[id] = merge ? {...(o[id]||{}),...clean(d)} : clean(d); this.save(c,o); return id; },
+  async add(c,d){ const id=uid(); await this.set(c,id,d,false); return id; },
+  async del(c,id){ const o=this.all(c); delete o[id]; this.save(c,o); },
+  async batchSet(c,arr){ const o=this.all(c); arr.forEach(([id,d])=>o[id]={...(o[id]||{}),...clean(d)}); this.save(c,o); }
+};
+const RemoteDB = {
+  async list(c,f){ const w = f ? Object.entries(f).map(([k,v])=>where(k,'==',v)) : []; const s = await getDocs(w.length ? query(collection(fdb,c),...w) : collection(fdb,c)); return s.docs.map(d=>({id:d.id,...d.data()})); },
+  async any(c){ const s = await getDocs(query(collection(fdb,c),limit(1))); return !s.empty; },
+  async get(c,id){ const s = await getDoc(doc(fdb,c,String(id))); return s.exists() ? {id:s.id,...s.data()} : null; },
+  async set(c,id,d,merge=true){ await setDoc(doc(fdb,c,String(id)), clean(d), {merge}); return id; },
+  async add(c,d){ const r = await addDoc(collection(fdb,c), clean(d)); return r.id; },
+  async del(c,id){ await deleteDoc(doc(fdb,c,String(id))); },
+  async batchSet(c,arr){ for(let i=0;i<arr.length;i+=400){ const b=writeBatch(fdb); arr.slice(i,i+400).forEach(([id,d])=>b.set(doc(fdb,c,String(id)),clean(d),{merge:true})); await b.commit(); } }
+};
+const DB = fdb ? RemoteDB : LocalDB;
+
+/* ===================== STATE ===================== */
+const DEF_SETTINGS = { orgName:'เทศบาลเมืองดอนแก้ว', district:'แม่ริม', province:'เชียงใหม่', fontUrl:'', fontBoldUrl:'' };
+const S = {
+  user:null, year:2570, years:[], proposals:[], revenues:[],
+  settings:{...DEF_SETTINGS, signers:{...DEF_SIGNERS}, deptSigners:{...DEF_DEPT_SIGNERS}},
+  view:'dashboard', f:{dept:'',plan:'',group:'',status:'',q:''},
+  af:{dept:'',plan:'',group:'',status:'',q:''}, apv:{}, asel:new Set(), _keys:{}, _adepts:[],
+  d:{kind:'both', dept:DEPTS[0], amt:'req', allPlans:false, note:true},
+  thFont:false, fk:1
+};
+const mapRole = r => { r=String(r||'').toLowerCase(); if(['admin','superadmin'].includes(r)) return 'admin'; if(['budget','planner','finance','approver','strategy'].includes(r)) return 'budget'; if(r==='viewer') return 'viewer'; return 'dept'; };
+const role = () => S.user?.budgetRole || mapRole(S.user?.role);
+const isAdmin = () => role()==='admin';
+const isBudget = () => ['admin','budget'].includes(role());
+const curYear = () => S.years.find(y=>y.year===S.year) || {};
+const yst = () => (YST.find(x=>x[0]===curYear().status)||YST[0])[1];
+const yearLocked = () => ['council_ok','governor_ok','promulgated'].includes(curYear().status);
+const canCreate = () => role()!=='viewer' && (!yearLocked() || isAdmin());
+function canEdit(p){ if(role()==='viewer') return false; if(yearLocked() && !isAdmin()) return false; if(isBudget()) return true; return p.dept===S.user.dept && ['draft','revise'].includes(p.status||'draft'); }
+const finalAmt = p => p.status==='rejected' ? 0 : (isF(p.amountApproved) ? num(p.amountApproved) : num(p.amount));
+const hasActual = p => isF(p.prev3) && isF(p.prev2);
+function pkey(p){ const cs=Object.keys(BUDGET[p.group]||{}), ts=(BUDGET[p.group]||{})[p.cat]||[]; return [idx(PLAN_ORDER,p.plan), idx(PLANS[p.plan]||[],p.work), idx(GORDER,p.group), idx(cs,p.cat), idx(ts,p.type)]; }
+function cmpProp(a,b){ const ka=pkey(a), kb=pkey(b); for(let i=0;i<ka.length;i++) if(ka[i]!==kb[i]) return ka[i]-kb[i]; return (a.createdAt||'').localeCompare(b.createdAt||''); }
+const PERS_GC = ['เงินสมทบกองทุนประกันสังคม','เงินสมทบกองทุนเงินทดแทน','เงินสมทบกองทุนบำเหน็จบำนาญข้าราชการส่วนท้องถิ่น (ก.บ.ท.)','เงินช่วยค่าครองชีพผู้รับบำนาญ (ช.ค.บ.)','เงินบำเหน็จบำนาญข้าราชการถ่ายโอน','เงินกองทุนบำเหน็จบำนาญข้าราชการ (กบข.)'];
+const PERS_OP = ['ค่าเช่าบ้าน','เงินช่วยเหลือการศึกษาบุตร'];
+const personnel = items => sumBy(items.filter(p => (p.group==='งบบุคลากร' && p.cat!=='เงินเดือน (ฝ่ายการเมือง)') || PERS_GC.includes(p.type) || PERS_OP.includes(p.type)), p => p._v);
+const activeItems = () => S.proposals.filter(p=>p.status!=='rejected').map(p=>({...p,_v:finalAmt(p)})).sort(cmpProp);
+function revSorted(){ return [...S.revenues].sort((a,b)=>{ const sa=Object.keys(REV), ka=[idx(sa,a.source), idx(Object.keys(REV[a.source]||{}),a.cat), idx((REV[a.source]||{})[a.cat]||[],a.item), a.order||0], kb=[idx(sa,b.source), idx(Object.keys(REV[b.source]||{}),b.cat), idx((REV[b.source]||{})[b.cat]||[],b.item), b.order||0]; for(let i=0;i<4;i++) if(ka[i]!==kb[i]) return ka[i]-kb[i]; return (a.createdAt||'').localeCompare(b.createdAt||''); }); }
+
+/* ===================== MODAL ===================== */
+let _mok=null, _onCancel=null;
+function modal(title, body, {ok='บันทึก', onOk=null, wide=false, cancel='ปิด', danger=false}={}){
+  _onCancel = null;
+  $('#mTitle').textContent = title; $('#mBody').innerHTML = body; $('#mdl').classList.toggle('wide', wide);
+  const b = $('#mOk'); b.style.display = onOk ? '' : 'none'; b.textContent = ok; b.className = 'btn ' + (danger ? 'danger' : 'pri');
+  $('#mCancel').textContent = cancel; _mok = onOk; $('#mask').classList.add('on');
+}
+function closeModal(){ $('#mask').classList.remove('on'); _mok=null; const c=_onCancel; _onCancel=null; c && c(); }
+$('#mOk').onclick = async () => { if(!_mok) return; const b=$('#mOk'); b.disabled=true; try { const r = await _mok(); if (r !== false) { _onCancel=null; closeModal(); } } catch(e){ console.error(e); toast(e.message||String(e),'err'); } finally { b.disabled=false; } };
+document.addEventListener('keydown', e => { if (e.key==='Escape' && $('#mask').classList.contains('on')) closeModal(); });
+const confirmBox = (msg,{ok='ยืนยัน',danger=true,title='ยืนยันการดำเนินการ'}={}) => new Promise(res => { modal(title,`<p style="margin:0;line-height:1.7">${msg}</p>`,{ok,danger,onOk:()=>res(true)}); _onCancel=()=>res(false); });
+const ask = (title,label,def='') => new Promise(res => { modal(title,`<label class="f">${label}</label><textarea class="inp" id="askV" rows="3">${esc(def)}</textarea>`,{ok:'ตกลง',onOk:()=>res($('#askV').value)}); _onCancel=()=>res(null); });
+
+/* ===================== FONT: TH Sarabun New ===================== */
+function ngpCSS(k, word){
+  const fam = "'TH Sarabun New','THSarabunNew','Sarabun',sans-serif";
+  const sz = n => `font-size:${(n*k).toFixed(1)}pt;${word?`mso-bidi-font-size:${n}pt;`:''}`;
+  const bf = word ? 'mso-bidi-font-weight:bold;' : '';
+  const ms = word ? "mso-ascii-font-family:'TH Sarabun New';mso-hansi-font-family:'TH Sarabun New';mso-bidi-font-family:'TH Sarabun New';" : '';
+  return `.ngp,table.ngt,table.ngt td{font-family:${fam};${ms}color:#000}
+table.ngt{border-collapse:collapse;width:100%;table-layout:fixed}
+table.ngt td{padding:1px 5px;vertical-align:top;line-height:1.15;word-wrap:break-word;${sz(16)}}
+table.ngt td.bd{border:.75pt solid #000}
+table.ngt td.th{background:#F2F2F2;font-weight:bold;${bf}text-align:center;vertical-align:middle}
+table.ngt td.b{font-weight:bold;${bf}}
+table.ngt td.c{text-align:center}table.ngt td.r{text-align:right}table.ngt td.l{text-align:left}
+table.ngt td.it{font-style:italic}
+table.ngt td.tot{background:#F7F7F7}
+table.ngt td.t1{${sz(18)}font-weight:bold;${bf}text-align:center}`;
+}
+function applyFontUrl(){
+  const s = S.settings, rule = (u,w) => u ? `@font-face{font-family:'TH Sarabun New';src:local('TH Sarabun New${w===700?' Bold':''}'),local('THSarabunNew${w===700?'-Bold':''}'),url('${String(u).replace(/'/g,'%27')}');font-weight:${w};font-style:normal}` : '';
+  $('#thfUrl').textContent = rule(s.fontUrl,400) + rule(s.fontBoldUrl,700);
+}
+async function checkThFont(){
+  try { await Promise.all([document.fonts.load('16px "TH Sarabun New"'), document.fonts.load('bold 16px "TH Sarabun New"')]); } catch(e){}
+  const c = document.createElement('canvas').getContext('2d'), t = 'กขคงจฉ ทดสอบภาษาไทย 1234567890 abcdefg';
+  c.font = '40px monospace'; const a = c.measureText(t).width;
+  c.font = '40px "TH Sarabun New", monospace'; const b = c.measureText(t).width;
+  return Math.abs(a-b) > 1;
+}
+async function setupFont(){ applyFontUrl(); S.thFont = await checkThFont(); S.fk = S.thFont ? 1 : 0.8; $('#ngpStyle').textContent = ngpCSS(S.fk,false); }
+
+/* ===================== AUTH ===================== */
+async function findUser(u){
+  try { const x = await DB.get(COL.users,u); if (x) return x; } catch(e){}
+  let l = await DB.list(COL.users,{username:u}); if (l[0]) return l[0];
+  l = await DB.list(COL.users,{email:u}); return l[0] || null;
+}
+const fi = (id,label,val,type='text',cls='',dis=false) => `<div class="${cls}"><label class="f">${label}</label><input class="inp ${type==='number'?'num':''}" id="${id}" type="${type}" ${type==='number'?'step="0.01"':''} value="${esc(val??'')}" ${dis?'disabled':''}></div>`;
+$('#lgForm').onsubmit = async e => {
+  e.preventDefault(); const u=$('#lgU').value.trim(), p=$('#lgP').value; $('#lgMsg').textContent=''; $('#lgBtn').disabled=true;
+  try {
+    const usr = await findUser(u); if (!usr) throw new Error('ไม่พบชื่อผู้ใช้นี้ในระบบ');
+    const h = await sha256(p);
+    if (!(usr.passwordHash===h || usr.password===p || usr.password===h)) throw new Error('รหัสผ่านไม่ถูกต้อง');
+    if (usr.active===false || usr.status==='inactive') throw new Error('บัญชีผู้ใช้นี้ถูกระงับ');
+    await startSession(usr);
+  } catch(err){ console.error(err); $('#lgMsg').textContent = /permission/i.test(err.message) ? 'ไม่มีสิทธิ์อ่านข้อมูลผู้ใช้ (ตรวจสอบ Firestore Rules)' : err.message; }
+  finally { $('#lgBtn').disabled=false; }
+};
+$('#lgSetup').onclick = e => { e.preventDefault();
+  modal('ตั้งค่าผู้ดูแลระบบครั้งแรก',`<div class="fg">${fi('su_u','ชื่อผู้ใช้','admin')}${fi('su_n','ชื่อ-สกุล','ผู้ดูแลระบบ')}${fi('su_p','รหัสผ่าน (อย่างน้อย 8 ตัว)','','password')}</div>`,{ok:'สร้างผู้ดูแลระบบ',onOk:async()=>{
+    const u=$('#su_u').value.trim(), p=$('#su_p').value; if(!u||p.length<8){ toast('กรอกชื่อผู้ใช้และรหัสผ่านอย่างน้อย 8 ตัวอักษร','err'); return false; }
+    if (await DB.any(COL.users)) { toast('มีผู้ใช้ในระบบแล้ว','err'); return false; }
+    await DB.set(COL.users,u,{username:u,displayName:$('#su_n').value,role:'admin',budgetRole:'admin',dept:'กองยุทธศาสตร์และงบประมาณ',active:true,passwordHash:await sha256(p),createdAt:nowISO()},false);
+    toast('สร้างผู้ดูแลระบบแล้ว กรุณาเข้าสู่ระบบ'); $('#lgSetup').hidden=true; $('#lgU').value=u; }});
+};
+async function startSession(usr){
+  S.user = usr; sessionStorage.setItem('dkbud_uid', usr.id);
+  if (role()==='dept' && usr.dept) S.f.dept = usr.dept;
+  if (DEPTS.includes(usr.dept)) S.d.dept = usr.dept;
+  $('#login').style.display='none'; $('#app').hidden=false;
+  await busy(boot);
+}
+async function boot(){
+  const st = await DB.get(COL.set,'main') || {};
+  S.settings = {...DEF_SETTINGS, ...st, signers:{...DEF_SIGNERS, ...(st.signers||{})}, deptSigners:{...DEF_DEPT_SIGNERS, ...(st.deptSigners||{})}};
+  await setupFont();
+  S.years = (await DB.list(COL.years)).map(y=>({...y,year:+y.year})).sort((a,b)=>a.year-b.year);
+  if (!S.years.length) { const y={year:2570,status:'preparing',createdAt:nowISO()}; await DB.set(COL.years,'2570',y); S.years=[{id:'2570',...y}]; }
+  S.year = S.years.some(y=>y.year===S.settings.activeYear) ? S.settings.activeYear : S.years.at(-1).year;
+  await loadYear(); renderShell(); go(S.view);
+}
+async function loadYear(){ const [p,r] = await Promise.all([DB.list(COL.prop,{year:S.year}), DB.list(COL.rev,{year:S.year})]); S.proposals = p; S.revenues = r; S.apv = {}; S.asel.clear(); }
+const reloadProps = async () => { S.proposals = await DB.list(COL.prop,{year:S.year}); };
+const reloadRevs = async () => { S.revenues = await DB.list(COL.rev,{year:S.year}); };
+
+/* ===================== SHELL & ROUTER ===================== */
+const VIEWS = {
+  dashboard:{t:'ภาพรวมงบประมาณ', i:'space_dashboard', r:vDashboard, a:aDashboard},
+  revenue:{t:'ประมาณการรายรับ', i:'savings', r:vRevenue},
+  proposals:{t:'คำขอตั้งงบประมาณรายจ่าย', i:'request_quote', r:vProposals, a:renderPropTable},
+  approve:{t:'อนุมัติงบประมาณที่ขอ', i:'approval', r:vApprove, a:aApprove},
+  check:{t:'ตรวจสอบตามระเบียบฯ', i:'fact_check', r:vCheck},
+  docs:{t:'เอกสาร งป.1 / งป.2', i:'description', r:vDocs},
+  settings:{t:'ตั้งค่าระบบ', i:'settings', r:vSettings, a:aSettings}
+};
+function renderShell(){
+  const work = ['dashboard','revenue','proposals', ...(isAdmin()?['approve']:[]), 'check'];
+  $('#nav').innerHTML = `<div class="sec-t">งานงบประมาณ</div>` + work.map(navA).join('') + `<div class="sec-t">เอกสาร & ระบบ</div>` + ['docs','settings'].map(navA).join('');
+  $('#yearSel').innerHTML = S.years.map(y=>`<option value="${y.year}" ${y.year===S.year?'selected':''}>พ.ศ. ${y.year}</option>`).join('');
+  $('#modeBadge').innerHTML = fdb ? `<span class="mode fb">● Firebase</span>` : `<span class="mode lc">● โหมดสาธิต (Local)</span>`;
+  $('#userChip').innerHTML = `<span class="ms" style="font-size:18px">person</span>${esc(S.user.displayName||S.user.username||S.user.id)}`;
+  $('#sideFoot').innerHTML = `<b>${esc(S.user.displayName||S.user.username||'')}</b><br>${ROLES[role()]}${S.user.dept?' · '+esc(S.user.dept):''}<br><span class="muted">สถานะปี ${S.year}: ${yst()}</span>`;
+}
+const navA = k => `<a data-v="${k}" onclick="App.go('${k}')" class="${S.view===k?'on':''}"><span class="ms">${VIEWS[k].i}</span>${VIEWS[k].t}</a>`;
+let CH = [];
+function go(v){
+  if (S.view==='approve' && v!=='approve' && Object.keys(S.apv).length) {
+    if (!confirm(`มียอดอนุมัติที่ปรับแต่ยังไม่บันทึก ${Object.keys(S.apv).length} รายการ ต้องการออกจากหน้านี้และยกเลิกการปรับหรือไม่?`)) return;
+    S.apv = {};
+  }
+  if (v==='approve' && !isAdmin()) v='dashboard';
+  S.view = VIEWS[v] ? v : 'dashboard';
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on', a.dataset.v===S.view));
+  $('#vTitle').textContent = `${VIEWS[S.view].t} · ปีงบประมาณ พ.ศ. ${S.year}`;
+  CH.forEach(c=>c.destroy()); CH=[];
+  $('#view').innerHTML = VIEWS[S.view].r();
+  VIEWS[S.view].a && VIEWS[S.view].a();
+  $('#side').classList.remove('open'); window.scrollTo(0,0);
+}
+function mkChart(id,cfg){ const el=document.getElementById(id); if(!el||!window.Chart) return; Chart.defaults.font.family='Sarabun'; CH.push(new Chart(el,cfg)); }
+function refreshView(){
+  if (S.view==='proposals' && $('#propBody')) renderPropTable();
+  else if (S.view==='approve' && $('#apvBody')) { renderApvTable(); updApv(); }
+  else go(S.view);
+}
+
+/* ===================== DASHBOARD ===================== */
+function computeChecks(){
+  const items = activeItems(), rev = sumBy(S.revenues,r=>num(r.amount)), exp = sumBy(items,p=>p._v), pers = personnel(items), out=[];
+  if (!rev) out.push({l:'err',t:'ยังไม่ได้บันทึกประมาณการรายรับ',d:'ต้องประมาณการรายรับเพื่อใช้ตรวจสอบความสมดุลของงบประมาณ'});
+  else if (exp > rev) out.push({l:'err',t:'งบประมาณไม่สมดุล: รายจ่ายสูงกว่ารายรับ',d:`รายจ่าย ${f2(exp)} บาท สูงกว่ารายรับ ${f2(rev)} บาท อยู่ ${f2(exp-rev)} บาท ใช้หน้า “อนุมัติงบประมาณที่ขอ” เพื่อตัดลด`});
+  else out.push({l:'ok',t:'งบประมาณสมดุล (รายจ่าย ≤ รายรับ)',d:`ส่วนต่างคงเหลือ ${f2(rev-exp)} บาท`});
+  const pp = exp ? pers/exp*100 : 0;
+  out.push({l: pp>40?'err':pp>37?'warn':'ok', t:`ค่าใช้จ่ายด้านบุคคล ${pp.toFixed(2)}% ของงบประมาณรายจ่าย`, d:`เกณฑ์ไม่เกิน 40% (ประมาณการ) = ${f2(pers)} บาท`});
+  const noAct = S.proposals.filter(p=>p.status!=='rejected' && !hasActual(p));
+  if (noAct.length) out.push({l:'warn',t:`${noAct.length} รายการยังไม่กรอกรายจ่ายจริงย้อนหลัง 2 ปี`,d:noAct.slice(0,5).map(p=>'• '+esc(p.dept)+' — '+esc(p.project)).join('<br>')});
+  const reserve = sumBy(items.filter(p=>p.type==='เงินสำรองจ่าย'),p=>p._v);
+  out.push(reserve>0 ? {l:'ok',t:'ตั้งเงินสำรองจ่ายแล้ว',d:`${f2(reserve)} บาท`} : {l:'warn',t:'ยังไม่ได้ตั้งเงินสำรองจ่ายในงบกลาง',d:'ควรตั้งไว้สำหรับกรณีฉุกเฉินหรือสาธารณภัย'});
+  const noRef = items.filter(p=>p.group==='งบลงทุน' && !String(p.planRef||'').trim());
+  out.push(noRef.length ? {l:'warn',t:`รายการงบลงทุน ${noRef.length} รายการยังไม่อ้างอิงแผนพัฒนาท้องถิ่น`,d:noRef.slice(0,5).map(p=>'• '+esc(p.project)).join('<br>')} : {l:'ok',t:'รายการงบลงทุนอ้างอิงแผนพัฒนาท้องถิ่นครบถ้วน',d:''});
+  const pend = S.proposals.filter(p=>['draft','submitted','revise'].includes(p.status||'draft'));
+  out.push(pend.length ? {l:'info',t:`ยังมี ${pend.length} รายการรอดำเนินการ/พิจารณา`,d:`มูลค่ารวม ${f2(sumBy(pend,p=>num(p.amount)))} บาท`} : {l:'ok',t:'พิจารณาคำขอครบทุกรายการแล้ว',d:''});
+  const spec = items.filter(p=>p.fund==='เงินอุดหนุนเฉพาะกิจ'); if (spec.length) out.push({l:'warn',t:`มี ${spec.length} รายการแหล่งเงินเป็นเงินอุดหนุนเฉพาะกิจ`,d:'ไม่ต้องตราเป็นเทศบัญญัติงบประมาณรายจ่ายทั่วไป ควรตรวจสอบ'});
+  const dl = new Date(S.year-543-1,7,15), days = Math.ceil((dl - new Date())/864e5);
+  out.push({l: days<0?'info':days<=30?'warn':'info', t: days>=0 ? `อีก ${days} วันถึงกำหนดเสนอร่างฯ ต่อสภาท้องถิ่น` : 'พ้นกำหนดวันเสนอร่างงบประมาณต่อสภาท้องถิ่นแล้ว', d:`ภายในวันที่ ${thDate(dl)} ตามระเบียบกระทรวงมหาดไทยว่าด้วยวิธีการงบประมาณของ อปท. พ.ศ. 2563`});
+  return out;
+}
+const chkHTML = c => `<div class="chk ${c.l}"><span class="ms">${{ok:'check_circle',warn:'warning',err:'error',info:'info'}[c.l]}</span><div><b>${c.t}</b><div class="small muted">${c.d||''}</div></div></div>`;
+function vDashboard(){
+  const items = activeItems(), rev = sumBy(S.revenues,r=>num(r.amount)), exp = sumBy(items,p=>p._v);
+  const req = sumBy(S.proposals,p=>num(p.amount)), appr = sumBy(S.proposals.filter(p=>p.status==='approved'),finalAmt);
+  const pers = personnel(items), pp = exp ? pers/exp*100 : 0, bal = rev-exp;
+  const ci = YST.findIndex(x=>x[0]===(curYear().status||'preparing'));
+  const cnt = k => S.proposals.filter(p=>(p.status||'draft')===k).length;
+  return `<div class="kpis">
+    <div class="kpi" style="--c:var(--pri)"><div class="l"><span class="ms">savings</span>ประมาณการรายรับ</div><div class="v">${f2(rev)}</div><div class="s">${S.revenues.length} รายการ</div></div>
+    <div class="kpi" style="--c:var(--info)"><div class="l"><span class="ms">request_quote</span>คำขอที่เสนอทั้งหมด</div><div class="v">${f2(req)}</div><div class="s">${S.proposals.length} รายการ</div></div>
+    <div class="kpi" style="--c:var(--ok)"><div class="l"><span class="ms">verified</span>อนุมัติแล้ว</div><div class="v">${f2(appr)}</div><div class="s">${cnt('approved')} รายการ</div></div>
+    <div class="kpi" style="--c:var(--sec)"><div class="l"><span class="ms">payments</span>ประมาณการรายจ่ายรวม</div><div class="v">${f2(exp)}</div><div class="s">ไม่รวมรายการที่ไม่อนุมัติ</div></div>
+    <div class="kpi" style="--c:${bal<0?'var(--err)':'var(--ok)'}"><div class="l"><span class="ms">balance</span>ดุลงบประมาณ</div><div class="v" style="color:${bal<0?'var(--err)':'inherit'}">${f2(bal)}</div><div class="s">${bal<0?'ขาดดุล — ต้องตัดลด':'สมดุล'}</div></div>
+    <div class="kpi" style="--c:${pp>40?'var(--err)':'var(--ter)'}"><div class="l"><span class="ms">groups</span>ค่าใช้จ่ายบุคคล</div><div class="v">${pp.toFixed(2)}%</div><div class="bar" style="margin-top:6px"><i style="width:${Math.min(pp/40*100,100)}%"></i></div><div class="s">เพดาน 40%</div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3><span class="ms">timeline</span>ขั้นตอนการจัดทำงบประมาณ ปี ${S.year}</h3>
+    <div class="steps">${YST.map((s,i)=>`<div class="step ${i<ci?'done':i===ci?'cur':''}">${i+1}. ${s[1]}</div>`).join('')}</div>
+    <div class="small muted" style="margin-top:8px">สถานะคำขอ: ${Object.entries(ST).map(([k,v])=>`<span class="badge b-${v.c}">${v.t} ${cnt(k)}</span>`).join(' ')}</div></div>
+  <div class="grid2">
+    <div class="card"><h3><span class="ms">donut_large</span>สัดส่วนรายจ่ายตามงบ</h3><div style="height:290px"><canvas id="c1"></canvas></div></div>
+    <div class="card"><h3><span class="ms">bar_chart</span>รายจ่ายตามแผนงาน</h3><div style="height:290px"><canvas id="c2"></canvas></div></div></div>
+  <div class="grid3">
+    <div class="card"><h3><span class="ms">apartment</span>คำขอแยกตามส่วนราชการ (ขอตั้ง vs อนุมัติ)</h3><div style="height:320px"><canvas id="c3"></canvas></div></div>
+    <div class="card"><h3><span class="ms">fact_check</span>ผลตรวจสอบเบื้องต้น</h3>${computeChecks().slice(0,5).map(chkHTML).join('')}<button class="btn sm" style="margin-top:8px" onclick="App.go('check')">ดูทั้งหมด</button></div></div>`;
+}
+function aDashboard(){
+  const items = activeItems();
+  mkChart('c1',{type:'doughnut',data:{labels:GORDER,datasets:[{data:GORDER.map(x=>sumBy(items.filter(p=>p.group===x),p=>p._v)),backgroundColor:PALETTE,borderWidth:2}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'right'},tooltip:{callbacks:{label:c=>`${c.label}: ${f2(c.raw)} บาท`}}}}});
+  const plans = PLAN_ORDER.filter(p=>items.some(x=>x.plan===p));
+  mkChart('c2',{type:'bar',data:{labels:plans.map(p=>p.replace('แผนงาน','')),datasets:[{label:'บาท',data:plans.map(p=>sumBy(items.filter(x=>x.plan===p),x=>x._v)),backgroundColor:plans.map(p=>PALETTE[SIDE_ORDER.indexOf(sideOf(p))])}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>f2(c.raw)+' บาท'}}},scales:{x:{ticks:{callback:v=>fM(v)}}}}});
+  mkChart('c3',{type:'bar',data:{labels:DEPTS.map(d=>d.replace('กองสาธารณสุขและสิ่งแวดล้อม','กองสาธารณสุขฯ')),datasets:[
+    {label:'ขอตั้ง',data:DEPTS.map(d=>sumBy(S.proposals.filter(p=>p.dept===d),p=>num(p.amount))),backgroundColor:'#99F6E4'},
+    {label:'อนุมัติแล้ว',data:DEPTS.map(d=>sumBy(S.proposals.filter(p=>p.dept===d&&p.status==='approved'),finalAmt)),backgroundColor:'#0D9488'}]},
+    options:{maintainAspectRatio:false,plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${f2(c.raw)} บาท`}}},scales:{y:{ticks:{callback:v=>fM(v)}}}}});
+}
+
+/* ===================== REVENUE ===================== */
+function vRevenue(){
+  const ed = isBudget() && (!yearLocked() || isAdmin()), Y=S.year, rs = revSorted();
+  let body = '';
+  for (const src of Object.keys(REV)) {
+    const si = rs.filter(r=>r.source===src); if (!si.length) continue;
+    body += `<tr class="g0"><td colspan="2">${src}</td><td class="r">${f2(sumBy(si,r=>num(r.prev2)))}</td><td class="r">${f2(sumBy(si,r=>num(r.prev1)))}</td><td class="r">${f2(sumBy(si,r=>num(r.amount)))}</td><td></td><td></td></tr>`;
+    for (const cat of Object.keys(REV[src])) {
+      const ci = si.filter(r=>r.cat===cat); if (!ci.length) continue;
+      body += `<tr class="g1"><td colspan="2" style="padding-left:20px">${cat}</td><td class="r">${f2(sumBy(ci,r=>num(r.prev2)))}</td><td class="r">${f2(sumBy(ci,r=>num(r.prev1)))}</td><td class="r">${f2(sumBy(ci,r=>num(r.amount)))}</td><td class="r">${pz(sumBy(ci,r=>num(r.amount)),sumBy(ci,r=>num(r.prev1)))}</td><td></td></tr>`;
+      body += ci.map(r=>`<tr><td style="padding-left:36px" colspan="2">${esc(r.item)}${ed?`<input class="inp rv small" data-id="${r.id}" data-f="note" value="${esc(r.note||'')}" placeholder="คำชี้แจงการประมาณการ" style="margin-top:4px">`:r.note?`<div class="desc">${esc(r.note)}</div>`:''}</td>
+        ${['prev2','prev1','amount'].map(f=>`<td class="r" style="width:150px">${ed?`<input class="inp num rv" data-id="${r.id}" data-f="${f}" type="number" step="0.01" value="${num(r[f])}">`:f2(r[f])}</td>`).join('')}
+        <td class="r">${pz(r.amount,r.prev1)}</td><td>${ed?`<button class="btn ic danger" onclick="App.delRev('${r.id}')"><span class="ms">delete</span></button>`:''}</td></tr>`).join('');
+    }
+  }
+  const tot = k => sumBy(S.revenues,r=>num(r[k]));
+  return `<div class="toolbar">
+    ${ed?`<button class="btn pri" onclick="App.saveRevenues()"><span class="ms">save</span>บันทึกทั้งหมด</button>
+    <button class="btn" onclick="App.addRev()"><span class="ms">add</span>เพิ่มรายการรายรับ</button>
+    <button class="btn" onclick="App.revTemplate()"><span class="ms">playlist_add</span>สร้างรายการตามแม่แบบ อปท.</button>`:`<span class="hint">ดูอย่างเดียว — เฉพาะเจ้าหน้าที่งบประมาณแก้ไขได้</span>`}
+    <span style="flex:1"></span><span class="chip">ประมาณการรายรับรวม <b>${f2(tot('amount'))}</b> บาท</span></div>
+  ${S.revenues.length?'':`<div class="hint" style="margin-bottom:12px">ยังไม่มีรายการรายรับ — กด “สร้างรายการตามแม่แบบ อปท.” เพื่อเริ่มต้น</div>`}
+  <div class="tbl-wrap"><table class="t"><thead><tr><th colspan="2">รายการรายรับ</th><th class="r">รายรับจริงปี ${Y-2}</th><th class="r">ประมาณการปี ${Y-1}</th><th class="r">ประมาณการปี ${Y}</th><th class="r">ร้อยละ</th><th></th></tr></thead>
+  <tbody>${body}<tr class="tot"><td colspan="2">รวมทั้งสิ้น</td><td class="r">${f2(tot('prev2'))}</td><td class="r">${f2(tot('prev1'))}</td><td class="r">${f2(tot('amount'))}</td><td class="r">${pz(tot('amount'),tot('prev1'))}</td><td></td></tr></tbody></table></div>`;
+}
+
+/* ===================== PROPOSALS ===================== */
+function vProposals(){
+  const Y=S.year;
+  return `${yearLocked()?`<div class="warnbox" style="margin-bottom:12px">ปีงบประมาณนี้อยู่ในสถานะ “${yst()}” รายการถูกล็อก (แก้ไขได้เฉพาะผู้ดูแลระบบ)</div>`:''}
+  <div class="toolbar">
+    <select class="inp" onchange="App.setF('dept',this.value)"><option value="">ทุกส่วนราชการ</option>${opts(DEPTS,S.f.dept)}</select>
+    <select class="inp" onchange="App.setF('plan',this.value)"><option value="">ทุกแผนงาน</option>${opts(PLAN_ORDER,S.f.plan)}</select>
+    <select class="inp" onchange="App.setF('group',this.value)"><option value="">ทุกงบ</option>${opts(GORDER,S.f.group)}</select>
+    <select class="inp" onchange="App.setF('status',this.value)"><option value="">ทุกสถานะ</option>${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${S.f.status===k?'selected':''}>${v.t}</option>`).join('')}</select>
+    <input class="inp" style="flex:1;min-width:220px" placeholder="ค้นหา รายการ / คำชี้แจง / ประเภท / งาน..." value="${esc(S.f.q)}" oninput="App.setF('q',this.value)">
+    ${canCreate()?`<button class="btn pri" onclick="App.openProp()"><span class="ms">add</span>เพิ่มคำขอ</button><button class="btn sec" onclick="App.openPullFromPlan()"><span class="ms">cloud_download</span>ดึงโครงการจากแผนพัฒนาฯ (ผ.02)</button>`:''}
+  </div>
+  <div class="hint" style="margin-bottom:12px">ผู้ขอตั้งงบประมาณต้องกรอก <b>รายจ่ายจริงย้อนหลัง 2 ปี (${Y-3} และ ${Y-2})</b> ทุกรายการก่อนส่งพิจารณา — หากไม่มีการใช้จ่ายให้กรอก 0</div>
+  <div class="toolbar" id="propSum"></div>
+  <div class="tbl-wrap"><table class="t"><thead><tr><th>#</th><th>ส่วนราชการ / แผนงาน / งาน</th><th>งบ / หมวด / ประเภท</th><th>รายการ / คำชี้แจง</th><th class="r">จ่ายจริง ${Y-3}</th><th class="r">จ่ายจริง ${Y-2}</th><th class="r">ประมาณการ ${Y-1}</th><th class="r">ขอตั้ง ${Y}</th><th class="r">อนุมัติ ${Y}</th><th>สถานะ</th><th class="c">จัดการ</th></tr></thead><tbody id="propBody"></tbody></table></div>`;
+}
+function filtered(){ const f=S.f, q=f.q.trim().toLowerCase();
+  return S.proposals.filter(p=>(!f.dept||p.dept===f.dept)&&(!f.plan||p.plan===f.plan)&&(!f.group||p.group===f.group)&&(!f.status||(p.status||'draft')===f.status)&&(!q||[p.project,p.desc,p.type,p.work,p.cat,p.planRef].join(' ').toLowerCase().includes(q))).sort(cmpProp); }
+function renderPropTable(){
+  const L = filtered(), tb = $('#propBody'); if (!tb) return;
+  tb.innerHTML = L.length ? L.map((p,i)=>{ const s=ST[p.status||'draft']||ST.draft, ce=canEdit(p), mine=p.dept===S.user.dept;
+    const acts = [
+      `<button class="btn ic" title="${ce?'แก้ไข':'ดูรายละเอียด'}" onclick="App.openProp('${p.id}')"><span class="ms">${ce?'edit':'visibility'}</span></button>`,
+      (ce && ['draft','revise'].includes(p.status||'draft') && (mine||isBudget())) ? `<button class="btn ic" title="ส่งพิจารณา" onclick="App.act('${p.id}','submit')"><span class="ms">send</span></button>`:'',
+      (isAdmin() && ['submitted','draft','revise'].includes(p.status||'draft')) ? `<button class="btn ic okb" title="อนุมัติตามที่ขอ" onclick="App.act('${p.id}','approve')"><span class="ms">check</span></button><button class="btn ic" title="ส่งกลับแก้ไข" onclick="App.act('${p.id}','revise')"><span class="ms">undo</span></button><button class="btn ic danger" title="ไม่อนุมัติ" onclick="App.act('${p.id}','reject')"><span class="ms">block</span></button>`:'',
+      canCreate() ? `<button class="btn ic" title="คัดลอก" onclick="App.act('${p.id}','dup')"><span class="ms">content_copy</span></button>`:'',
+      ce ? `<button class="btn ic danger" title="ลบ" onclick="App.act('${p.id}','del')"><span class="ms">delete</span></button>`:''
+    ].join('');
+    return `<tr><td class="muted">${i+1}</td>
+      <td><span class="badge b-sec">${esc(p.dept||'-')}</span><div class="small" style="margin-top:3px">${esc((p.plan||'').replace('แผนงาน',''))}</div><div class="small muted">${esc(p.work||'')}</div></td>
+      <td><div class="small"><b>${esc(p.group)}</b> › ${esc(p.cat)}</div><div class="small muted">${esc(p.type)}</div></td>
+      <td><div class="proj">${esc(p.project)}</div>${p.desc?`<div class="desc">${esc(String(p.desc).slice(0,180))}${String(p.desc).length>180?'…':''}</div>`:''}
+        ${p.group==='งบลงทุน'&&!p.planRef?`<div class="small" style="color:var(--warn)">⚠ ยังไม่อ้างอิงแผนพัฒนาท้องถิ่น</div>`:''}
+        ${p.reviewNote?`<div class="small" style="color:var(--ter)">หมายเหตุพิจารณา: ${esc(p.reviewNote)}</div>`:''}</td>
+      <td class="r">${fa(p.prev3)}</td><td class="r">${fa(p.prev2)}</td><td class="r">${fz(p.prev1)}</td>
+      <td class="r"><b>${f2(p.amount)}</b></td>
+      <td class="r">${p.status==='approved'?`<b style="color:var(--ok)">${f2(finalAmt(p))}</b>`:isF(p.amountApproved)?f2(p.amountApproved):'-'}</td>
+      <td><span class="badge b-${s.c}">${s.t}</span></td><td class="nw">${acts}</td></tr>`; }).join('')
+    : `<tr><td colspan="11" class="c muted" style="padding:40px">ไม่พบรายการ</td></tr>`;
+  const myDraft = S.proposals.filter(p=>['draft','revise'].includes(p.status||'draft') && (isBudget() || p.dept===S.user.dept));
+  $('#propSum').innerHTML = `<span class="chip">แสดง <b>${L.length}</b> รายการ</span><span class="chip">ขอตั้ง <b>${f2(sumBy(L,p=>num(p.amount)))}</b></span><span class="chip">อนุมัติแล้ว <b>${f2(sumBy(L.filter(p=>p.status==='approved'),finalAmt))}</b></span><span style="flex:1"></span>
+    ${myDraft.length && canCreate() ? `<button class="btn sm" onclick="App.bulk('submit')"><span class="ms">send</span>ส่งพิจารณาทั้งหมด (${myDraft.length})</button>`:''}
+    ${isAdmin() ? `<button class="btn sm sec" onclick="App.go('approve')"><span class="ms">approval</span>ไปหน้าอนุมัติงบประมาณ</button>`:''}
+    <button class="btn sm" onclick="App.exportCSV()"><span class="ms">download</span>CSV</button>
+    ${canCreate()?`<button class="btn sm" onclick="App.importCSV()"><span class="ms">upload</span>นำเข้า CSV</button>`:''}`;
+}
+function openProp(id){
+  const src = id ? S.proposals.find(x=>x.id===id) : null; if (id && !src) return;
+  const isB = isBudget(), isA = isAdmin();
+  const p = src ? {...src} : {dept: DEPTS.includes(S.user.dept)?S.user.dept:DEPTS[0], status:'draft', fund:'เงินรายได้'};
+  if (!src) { const d = DEPT_DEFAULT[p.dept]; if (d) { p.plan=d[0]; p.work=d[1]; } }
+  const ro = !!src && !canEdit(p), Y=S.year;
+  modal(src ? (ro?'รายละเอียดคำขอ':'แก้ไขคำขอตั้งงบประมาณ') : 'เพิ่มคำขอตั้งงบประมาณรายจ่าย', `
+  <div class="fg c3">
+    <div><label class="f">ส่วนราชการ *</label><select class="inp" id="f_dept" ${!isB&&S.user.dept?'disabled':''}>${opts(DEPTS,p.dept)}</select></div>
+    <div><label class="f">แผนงาน *</label><select class="inp" id="f_plan"><option value="">— เลือก —</option>${opts(PLAN_ORDER,p.plan)}</select></div>
+    <div><label class="f">งาน *</label><select class="inp" id="f_work"></select></div>
+    <div class="full small">ด้าน: <span class="badge b-sec" id="f_side"></span></div>
+    <div><label class="f">งบ *</label><select class="inp" id="f_group"><option value="">— เลือก —</option>${opts(GORDER,p.group)}</select></div>
+    <div><label class="f">หมวด *</label><select class="inp" id="f_cat"></select></div>
+    <div><label class="f">ประเภท *</label><select class="inp" id="f_type"></select></div>
+    <div class="full" style="background:var(--pri-bg);border:1px dashed var(--pri-l);border-radius:var(--r);padding:10px 12px">
+      <label class="f" style="color:var(--pri-d);margin-bottom:6px">🔗 ดึงข้อมูลโครงการจากแผนพัฒนาท้องถิ่น (ผ.02) หรือความต้องการ 10 หมู่บ้าน (เติมชื่อ งบประมาณ และอ้างอิงแผนอัตโนมัติ)</label>
+      <div style="display:flex;gap:8px">
+        <select class="inp" id="f_planPicker" style="flex:1"><option value="">— กำลังโหลดรายการโครงการจากแผนพัฒนาท้องถิ่น... —</option></select>
+        <button type="button" class="btn pri sm" id="f_applyPlanProj"><span class="ms">download</span>ดึงข้อมูลใส่ฟอร์ม</button>
+      </div>
+    </div>
+    <div class="full"><label class="f">ชื่อรายการ / โครงการ * (แสดงใน งป.2)</label><div style="display:flex;gap:8px"><input class="inp" id="f_project" value="${esc(p.project||'')}" placeholder="เช่น ค่าใช้จ่ายในการเดินทางไปราชการในและนอกราชอาณาจักร"><button type="button" class="btn sec" id="f_auto"><span class="ms">auto_fix_high</span>จับคู่อัตโนมัติ</button></div></div>
+    <div class="full"><label class="f">คำชี้แจง</label><textarea class="inp" id="f_desc" rows="3" placeholder="เพื่อจ่ายเป็น... ตามหนังสือ/ระเบียบ...">${esc(p.desc||'')}</textarea></div>
+    <div class="full" style="border-top:1px dashed var(--line);padding-top:10px"><b style="color:var(--pri-d)">ข้อมูลเปรียบเทียบการใช้จ่าย (ผู้ขอต้องกรอก)</b><div class="small muted">กรอกรายจ่ายจริงย้อนหลัง 2 ปี หากไม่มีการใช้จ่ายให้กรอก 0</div></div>
+    ${fi('f_prev3',`รายจ่ายจริงปี ${Y-3} *`,p.prev3??'','number')}
+    ${fi('f_prev2',`รายจ่ายจริงปี ${Y-2} *`,p.prev2??'','number')}
+    ${fi('f_prev1',`ประมาณการ (งบที่ได้รับ) ปี ${Y-1}`,p.prev1??'','number')}
+    ${fi('f_amount',`จำนวนเงินที่ขอตั้งปี ${Y} *`,p.amount??'','number')}
+    <div><label class="f">แหล่งเงิน</label><select class="inp" id="f_fund">${opts(FUNDS,p.fund)}</select></div>
+    ${fi('f_ref','อ้างอิงแผนพัฒนาท้องถิ่น (หน้า/ลำดับ)',p.planRef)}
+    <div class="full"><label class="f">ความสอดคล้องยุทธศาสตร์ชาติ / ยุทธศาสตร์จังหวัด / แผนพัฒนาท้องถิ่น (แสดงใน งป.2)</label><textarea class="inp" id="f_strat" rows="2">${esc(p.strategy||'')}</textarea></div>
+    ${isA?`<div class="full" style="border-top:1px dashed var(--line);padding-top:10px"><b style="color:var(--sec)">ส่วนการพิจารณา (ผู้ดูแลระบบ)</b></div>
+    ${fi('f_appr','ยอดอนุมัติ (ว่าง = ตามที่ขอ)',p.amountApproved??'','number')}
+    <div><label class="f">สถานะ</label><select class="inp" id="f_status">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${(p.status||'draft')===k?'selected':''}>${v.t}</option>`).join('')}</select></div>
+    ${fi('f_note','หมายเหตุการพิจารณา',p.reviewNote)}`:(p.reviewNote?`<div class="full warnbox">หมายเหตุการพิจารณา: ${esc(p.reviewNote)}</div>`:'')}
+    ${src?`<div class="full small muted">สร้างโดย ${esc(p.createdBy||'-')} ${p.createdAt?new Date(p.createdAt).toLocaleString('th-TH'):''} · แก้ไขล่าสุด ${esc(p.updatedBy||'-')} ${p.updatedAt?new Date(p.updatedAt).toLocaleString('th-TH'):''}</div>`:''}
+  </div>`, {wide:true, onOk: ro ? null : async () => {
+    const p3=$('#f_prev3').value, p2=$('#f_prev2').value;
+    if (p3==='' || p2==='') { toast(`กรุณากรอกรายจ่ายจริงปี ${Y-3} และ ${Y-2} (ไม่มีให้กรอก 0)`,'err'); return false; }
+    const d = { dept:$('#f_dept').value, plan:$('#f_plan').value, work:$('#f_work').value, group:$('#f_group').value, cat:$('#f_cat').value, type:$('#f_type').value,
+      project:$('#f_project').value.trim(), desc:$('#f_desc').value.trim(), fund:$('#f_fund').value, planRef:$('#f_ref').value.trim(), strategy:$('#f_strat').value.trim(),
+      prev3:num(p3), prev2:num(p2), prev1:num($('#f_prev1').value), amount:num($('#f_amount').value) };
+    if (isA) { const a=$('#f_appr').value; d.amountApproved = a==='' ? null : num(a); d.status=$('#f_status').value; d.reviewNote=$('#f_note').value.trim();
+      if (isF(d.amountApproved) && d.amountApproved > d.amount) { toast('ยอดอนุมัติต้องไม่เกินยอดที่ขอตั้ง','err'); return false; } }
+    autoMatch(d);
+    if (!d.plan||!d.work||!d.group||!d.cat||!d.type||!d.project) { toast('กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบ','err'); return false; }
+    if (d.amount < 0 || d.prev3 < 0 || d.prev2 < 0) { toast('จำนวนเงินต้องไม่ติดลบ','err'); return false; }
+    d.updatedAt = nowISO(); d.updatedBy = S.user.username || S.user.id;
+    await busy(async () => {
+      if (src) await DB.set(COL.prop, src.id, d);
+      else await DB.add(COL.prop, {...d, year:S.year, status:d.status||'draft', createdAt:nowISO(), createdBy:d.updatedBy});
+      await reloadProps();
+    });
+    if (src) delete S.apv[src.id];
+    toast('บันทึกคำขอเรียบร้อย'); refreshView();
+  }});
+  const fillWork = () => { const pl=$('#f_plan').value; $('#f_work').innerHTML=(PLANS[pl]||[]).map(w=>`<option ${w===p.work?'selected':''}>${esc(w)}</option>`).join(''); $('#f_side').textContent = pl ? sideOf(pl) : '—'; };
+  const fillType = () => { const g=$('#f_group').value, c=$('#f_cat').value; $('#f_type').innerHTML=((BUDGET[g]||{})[c]||[]).map(t=>`<option ${t===p.type?'selected':''}>${esc(t)}</option>`).join(''); };
+  const fillCat = () => { const g=$('#f_group').value; $('#f_cat').innerHTML=Object.keys(BUDGET[g]||{}).map(c=>`<option ${c===p.cat?'selected':''}>${esc(c)}</option>`).join(''); fillType(); };
+  fillWork(); fillCat();
+  $('#f_plan').onchange = fillWork; $('#f_cat').onchange = fillType;
+  $('#f_group').onchange = () => { fillCat(); if ($('#f_group').value==='งบกลาง') { p.plan='แผนงานงบกลาง'; p.work='งบกลาง'; $('#f_plan').value=p.plan; fillWork(); } };
+  $('#f_dept').onchange = () => { if (src) return; const d=DEPT_DEFAULT[$('#f_dept').value]; if (d) { p.plan=d[0]; p.work=d[1]; $('#f_plan').value=d[0]; fillWork(); } };
+  $('#f_auto').onclick = () => { const t = suggestType($('#f_project').value+' '+$('#f_desc').value);
+    if (!t) return toast('ไม่พบประเภทรายจ่ายที่ตรงกัน กรุณาเลือกเอง','warn');
+    const m = TYPE_IDX[t]; p.group=m.group; p.cat=m.cat; p.type=t; $('#f_group').value=m.group; fillCat();
+    if (m.group==='งบกลาง') { p.plan='แผนงานงบกลาง'; p.work='งบกลาง'; $('#f_plan').value=p.plan; fillWork(); }
+    toast(`จับคู่: ${m.group} › ${m.cat} › ${t}`); };
+  bindPlanPickerInModal(fillWork, fillCat);
+  if (ro) $('#mBody').querySelectorAll('input,select,textarea,button').forEach(e=>e.disabled=true);
+}
+async function act(id,a){
+  const p = S.proposals.find(x=>x.id===id); if (!p) return;
+  const by = S.user.username || S.user.id, t = nowISO();
+  if (a==='del') { if (!await confirmBox(`ลบรายการ “${esc(p.project)}” ?`)) return; await busy(()=>DB.del(COL.prop,id)); }
+  else if (a==='submit') { if (!hasActual(p)) { toast(`กรุณากรอกรายจ่ายจริงปี ${S.year-3} และ ${S.year-2} ก่อนส่งพิจารณา`,'err'); return openProp(id); }
+    await busy(()=>DB.set(COL.prop,id,{status:'submitted',submittedAt:t,updatedAt:t,updatedBy:by})); }
+  else if (a==='approve') { if (!isAdmin()) return; await busy(()=>DB.set(COL.prop,id,{status:'approved',amountApproved:finalAmt({...p,status:'approved'}),reviewedAt:t,reviewedBy:by,updatedAt:t,updatedBy:by})); }
+  else if (a==='revise' || a==='reject') { if (!isAdmin()) return; const n = await ask(a==='revise'?'ส่งกลับแก้ไข':'ไม่อนุมัติรายการ','เหตุผล / ข้อสังเกต',p.reviewNote||''); if (n===null) return;
+    await busy(()=>DB.set(COL.prop,id,{status:a==='revise'?'revise':'rejected',reviewNote:n,reviewedAt:t,reviewedBy:by,updatedAt:t,updatedBy:by})); }
+  else if (a==='dup') await busy(()=>DB.add(COL.prop,{...clean(p),project:p.project+' (สำเนา)',status:'draft',amountApproved:null,reviewNote:'',createdAt:t,createdBy:by,updatedAt:t,updatedBy:by}));
+  delete S.apv[id]; S.asel.delete(id);
+  await reloadProps(); toast('ดำเนินการเรียบร้อย'); refreshView();
+}
+async function bulk(a){
+  const t=nowISO(), by=S.user.username||S.user.id;
+  if (a==='submit') { const all=S.proposals.filter(p=>['draft','revise'].includes(p.status||'draft') && (isBudget()||p.dept===S.user.dept));
+    const L=all.filter(hasActual), skip=all.length-L.length;
+    if (!L.length) return toast('ไม่มีรายการที่พร้อมส่ง (ต้องกรอกรายจ่ายจริงย้อนหลัง 2 ปีก่อน)','warn');
+    if (!await confirmBox(`ส่งพิจารณา ${L.length} รายการ?${skip?`<br><span style="color:#B45309">ข้าม ${skip} รายการที่ยังไม่กรอกรายจ่ายจริงย้อนหลัง</span>`:''}`,{danger:false})) return;
+    await busy(()=>DB.batchSet(COL.prop,L.map(p=>[p.id,{status:'submitted',submittedAt:t,updatedAt:t,updatedBy:by}]))); }
+  await reloadProps(); toast('ดำเนินการเรียบร้อย'); refreshView();
+}
+
+/* ===================== APPROVAL (ADMIN) ===================== */
+const avgAct = p => { const a=[p.prev3,p.prev2].filter(isF).map(num); return a.length ? sumBy(a,x=>x)/a.length : null; };
+const savedApv = p => isF(p.amountApproved) ? num(p.amountApproved) : num(p.amount);
+const apvVal = p => p.status==='rejected' ? 0 : (S.apv[p.id] !== undefined ? S.apv[p.id] : savedApv(p));
+function setApv(p,v){ v = Math.max(0, Math.min(num(p.amount), Math.round(num(v)*100)/100)); if (Math.abs(v-savedApv(p))<0.005) delete S.apv[p.id]; else S.apv[p.id]=v; }
+const cutTxt = c => c > 0.004 ? `<span style="color:var(--err)">−${f2(c)}</span>` : '<span class="muted">-</span>';
+function aList(){ const f=S.af, q=f.q.trim().toLowerCase();
+  return S.proposals.filter(p=>(!f.dept||p.dept===f.dept)&&(!f.plan||p.plan===f.plan)&&(!f.group||p.group===f.group)&&(f.status?(p.status||'draft')===f.status:p.status!=='rejected')&&(!q||[p.project,p.desc,p.type,p.work].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>idx(DEPTS,a.dept)-idx(DEPTS,b.dept)||cmpProp(a,b)); }
+function vApprove(){
+  if (!isAdmin()) return `<div class="warnbox">เฉพาะผู้ดูแลระบบ</div>`;
+  const Y=S.year, f=S.af;
+  return `<div class="sticky-k"><div class="kpis" id="apvKpi"></div></div>
+  ${yearLocked()?`<div class="warnbox" style="margin-bottom:12px">ปีงบประมาณอยู่ในสถานะ “${yst()}” — การแก้ไขยอดหลังสภาฯ เห็นชอบควรทำด้วยความระมัดระวัง</div>`:''}
+  <div class="card">
+    <div class="toolbar">
+      <select class="inp" onchange="App.setAF('dept',this.value)"><option value="">ทุกส่วนราชการ</option>${opts(DEPTS,f.dept)}</select>
+      <select class="inp" onchange="App.setAF('plan',this.value)"><option value="">ทุกแผนงาน</option>${opts(PLAN_ORDER,f.plan)}</select>
+      <select class="inp" onchange="App.setAF('group',this.value)"><option value="">ทุกงบ</option>${opts(GORDER,f.group)}</select>
+      <select class="inp" onchange="App.setAF('status',this.value)"><option value="">ทุกสถานะ (ยกเว้นไม่อนุมัติ)</option>${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${f.status===k?'selected':''}>${v.t}</option>`).join('')}</select>
+      <input class="inp" style="flex:1;min-width:200px" placeholder="ค้นหารายการ..." value="${esc(f.q)}" onchange="App.setAF('q',this.value)">
+    </div>
+    <div class="toolbar" style="margin:0">
+      <span class="chip">เลือก <b id="apvSelN">0</b> รายการ</span>
+      <span class="small muted">ลด</span><input class="inp num" id="apvPct" type="number" value="10" min="1" max="99" style="width:80px;min-width:0">
+      <span class="small muted">%</span>
+      <button class="btn sm" onclick="App.apvTool('pct')"><span class="ms">percent</span>ลดตาม % (ที่เลือก)</button>
+      <button class="btn sm" onclick="App.apvTool('avg')"><span class="ms">trending_down</span>ปรับลงเท่าค่าเฉลี่ยจ่ายจริง</button>
+      <button class="btn sm" onclick="App.apvTool('reset')"><span class="ms">restart_alt</span>คืนยอดตามที่ขอ</button>
+      <button class="btn sm sec" onclick="App.apvTool('balance')"><span class="ms">balance</span>เกลี่ยตัดลดให้สมดุลรายรับ</button>
+      <span style="flex:1"></span>
+      <button class="btn" onclick="App.apvCancel()"><span class="ms">undo</span>ยกเลิกการปรับ</button>
+      <button class="btn" id="apvSaveBtn" onclick="App.apvSave()"><span class="ms">save</span>บันทึกยอดที่ปรับ</button>
+      <button class="btn pri" onclick="App.apvApprove()"><span class="ms">done_all</span>อนุมัติรายการที่เลือก</button>
+    </div>
+  </div>
+  <div class="tbl-wrap" style="margin-top:12px;max-height:calc(100vh - 330px)"><table class="t"><thead><tr>
+    <th><input type="checkbox" onchange="App.apvSelAll(this.checked)"></th><th>#</th><th>งาน / ประเภท</th><th>รายการ</th>
+    <th class="r">จ่ายจริง ${Y-3}</th><th class="r">จ่ายจริง ${Y-2}</th><th class="r">ประมาณการ ${Y-1}</th><th class="r">เฉลี่ยจ่ายจริง</th>
+    <th class="r">ขอตั้ง ${Y}</th><th class="r">เทียบเฉลี่ย</th><th class="r">ยอดอนุมัติ ${Y}</th><th class="r">ตัดลด</th><th>สถานะ</th><th class="c">จัดการ</th></tr></thead>
+    <tbody id="apvBody"></tbody></table></div>
+  <div class="grid2" id="apvSum"></div>`;
+}
+function aApprove(){ renderApvTable(); updApv(); }
+function apvSumCells(L,key){ S._keys[key] = L.map(p=>p.id);
+  const av = sumBy(L,p=>avgAct(p)||0);
+  return `<td class="r">${f2(sumBy(L,p=>num(p.prev3)))}</td><td class="r">${f2(sumBy(L,p=>num(p.prev2)))}</td><td class="r">${f2(sumBy(L,p=>num(p.prev1)))}</td><td class="r">${f2(av)}</td><td class="r">${f2(sumBy(L,p=>num(p.amount)))}</td><td></td><td class="r" id="sa_${key}"></td><td class="r" id="sc_${key}"></td>`; }
+function apvRow(p,i){
+  const req=num(p.amount), av=avgAct(p), v=apvVal(p), rej=p.status==='rejected', s=ST[p.status||'draft'];
+  const d = av!=null && av>0 ? (req-av)/av*100 : null;
+  const flags = [
+    !hasActual(p) ? `<span class="flag b-warn">ยังไม่กรอกรายจ่ายจริงย้อนหลัง</span>`:'',
+    d!=null && d>20 ? `<span class="flag b-err">ขอเพิ่ม ${d.toFixed(1)}% จากค่าเฉลี่ยจ่ายจริง</span>`:'',
+    av===0 && req>0 && hasActual(p) ? `<span class="flag b-info">รายการใหม่ (ไม่เคยจ่าย)</span>`:'',
+    p.group==='งบลงทุน' && !p.planRef ? `<span class="flag b-warn">ไม่อ้างอิงแผนพัฒนา</span>`:'',
+    (p.status||'draft')==='draft' ? `<span class="flag b-gray">ยังไม่ส่งพิจารณา</span>`:''
+  ].join('');
+  const pc = d==null ? '<span class="muted">-</span>' : `<span style="color:${d>20?'var(--err)':d>0?'#B45309':'var(--ok)'};font-weight:600">${d>0?'+':''}${d.toFixed(1)}%</span>`;
+  return `<tr id="ar_${p.id}" class="${S.apv[p.id]!==undefined?'chg':''} ${rej?'rej':''}">
+    <td>${rej?'':`<input type="checkbox" ${S.asel.has(p.id)?'checked':''} onchange="App.apvSel('${p.id}',this.checked)">`}</td><td class="muted">${i}</td>
+    <td><div class="small">${esc(p.work)}</div><div class="small muted">${esc(p.group)} › ${esc(p.type)}</div></td>
+    <td><div class="proj">${esc(p.project)}</div>${flags}${p.reviewNote?`<div class="small" style="color:var(--ter)">หมายเหตุ: ${esc(p.reviewNote)}</div>`:''}</td>
+    <td class="r">${fa(p.prev3)}</td><td class="r">${fa(p.prev2)}</td><td class="r">${fz(p.prev1)}</td><td class="r">${av==null?'—':f2(av)}</td>
+    <td class="r"><b>${f2(req)}</b></td><td class="r">${pc}</td>
+    <td class="r">${rej?'<span class="badge b-err">ไม่อนุมัติ</span>':`<input class="inp num apv-in" type="number" step="0.01" min="0" max="${req}" value="${v}" oninput="App.apvInput('${p.id}',this)">`}</td>
+    <td class="r" id="ac_${p.id}">${cutTxt(req-v)}</td>
+    <td><span class="badge b-${s.c}">${s.t}</span></td>
+    <td class="nw"><button class="btn ic" title="ดูรายละเอียด" onclick="App.openProp('${p.id}')"><span class="ms">visibility</span></button>
+      <button class="btn ic okb" title="อนุมัติตามยอดในช่อง" onclick="App.apvOne('${p.id}')"><span class="ms">check</span></button>
+      ${rej?'':`<button class="btn ic" title="ส่งกลับแก้ไข" onclick="App.act('${p.id}','revise')"><span class="ms">undo</span></button><button class="btn ic danger" title="ไม่อนุมัติ" onclick="App.act('${p.id}','reject')"><span class="ms">block</span></button>`}</td></tr>`;
+}
+function renderApvTable(){
+  const tb=$('#apvBody'); if(!tb) return; const L=aList(); S._keys={}; let h='', n=0;
+  S._adepts = [...new Set(L.map(p=>p.dept))];
+  S._adepts.forEach((d,di)=>{ const DL=L.filter(p=>p.dept===d);
+    h += `<tr class="dh"><td><input type="checkbox" onchange="App.apvSelDept(${di},this.checked)"></td><td colspan="3">${esc(d||'-')} <span class="small" style="font-weight:400">(${DL.length} รายการ)</span></td>${apvSumCells(DL,'d'+di)}<td colspan="2"></td></tr>`;
+    DL.forEach(p=>{ h += apvRow(p,++n); }); });
+  h += L.length ? `<tr class="tot"><td></td><td colspan="3">รวมตามตัวกรอง (${L.length} รายการ)</td>${apvSumCells(L,'ft')}<td colspan="2"></td></tr>` : `<tr><td colspan="14" class="c muted" style="padding:40px">ไม่พบรายการ</td></tr>`;
+  tb.innerHTML = h;
+}
+function updApv(){
+  if (!$('#apvKpi')) return;
+  const all=S.proposals, act=all.filter(p=>p.status!=='rejected');
+  const req=sumBy(act,p=>num(p.amount)), apv=sumBy(act,apvVal), cut=req-apv, rejS=sumBy(all.filter(p=>p.status==='rejected'),p=>num(p.amount));
+  const rev=sumBy(S.revenues,r=>num(r.amount)), bal=rev-apv;
+  const pers=personnel(act.map(p=>({...p,_v:apvVal(p)}))), pp=apv?pers/apv*100:0, nChg=Object.keys(S.apv).length;
+  $('#apvKpi').innerHTML = `
+    <div class="kpi" style="--c:var(--info)"><div class="l"><span class="ms">request_quote</span>รวมยอดขอตั้งทั้งหมด</div><div class="v">${f2(req)}</div><div class="s">${act.length} รายการ${rejS?` · ไม่อนุมัติ ${f2(rejS)}`:''}</div></div>
+    <div class="kpi" style="--c:var(--pri)"><div class="l"><span class="ms">verified</span>รวมยอดอนุมัติ (หลังปรับ)</div><div class="v">${f2(apv)}</div><div class="s">${nChg?`<b style="color:#B45309">ยังไม่บันทึก ${nChg} รายการ</b>`:'บันทึกครบแล้ว'}</div></div>
+    <div class="kpi" style="--c:var(--ter)"><div class="l"><span class="ms">content_cut</span>ยอดตัดลดรวม</div><div class="v" style="color:${cut>0?'var(--err)':'inherit'}">${f2(cut)}</div><div class="s">${req?(cut/req*100).toFixed(2):'0.00'}% ของยอดขอตั้ง</div></div>
+    <div class="kpi" style="--c:var(--ok)"><div class="l"><span class="ms">savings</span>ประมาณการรายรับ</div><div class="v">${f2(rev)}</div><div class="s">${S.revenues.length?'จากหน้าประมาณการรายรับ':'ยังไม่ได้บันทึก'}</div></div>
+    <div class="kpi" style="--c:${bal<0?'var(--err)':'var(--ok)'}"><div class="l"><span class="ms">balance</span>ดุลงบประมาณ (รายรับ − อนุมัติ)</div><div class="v" style="color:${bal<0?'var(--err)':'var(--ok)'}">${f2(bal)}</div><div class="s">${bal<0?`<b style="color:var(--err)">ต้องตัดลดอีก ${f2(-bal)} บาท</b>`:'สมดุล'}</div></div>
+    <div class="kpi" style="--c:${pp>40?'var(--err)':'var(--sec)'}"><div class="l"><span class="ms">groups</span>ค่าใช้จ่ายบุคคล</div><div class="v">${pp.toFixed(2)}%</div><div class="bar" style="margin-top:6px"><i style="width:${Math.min(pp/40*100,100)}%"></i></div><div class="s">เพดาน 40%</div></div>`;
+  for (const [k,ids] of Object.entries(S._keys)) { const L=all.filter(p=>ids.includes(p.id)); const a=sumBy(L,apvVal), c=sumBy(L,p=>num(p.amount))-a;
+    const ea=$('#sa_'+k), ec=$('#sc_'+k); if(ea) ea.textContent=f2(a); if(ec) ec.innerHTML=k==='ft'?(c>0.004?'−'+f2(c):'-'):cutTxt(c); }
+  $('#apvSelN').textContent = S.asel.size;
+  const sb=$('#apvSaveBtn'); sb.disabled=!nChg; sb.innerHTML=`<span class="ms">save</span>บันทึกยอดที่ปรับ${nChg?` (${nChg})`:''}`;
+  const rowsOf = (keys,fn) => keys.map(k=>{ const L=act.filter(p=>fn(p)===k); const r=sumBy(L,p=>num(p.amount)), a=sumBy(L,apvVal); return [k,r,a]; }).filter(x=>x[1]);
+  const tbl = (title,icon,rows) => `<div class="card"><h3><span class="ms">${icon}</span>${title}</h3><table class="t"><thead><tr><th></th><th class="r">ขอตั้ง</th><th class="r">อนุมัติ (หลังปรับ)</th><th class="r">ตัดลด</th><th class="r">% ตัด</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${f2(r[1])}</td><td class="r"><b>${f2(r[2])}</b></td><td class="r">${cutTxt(r[1]-r[2])}</td><td class="r">${r[1]?((r[1]-r[2])/r[1]*100).toFixed(2):'0.00'}%</td></tr>`).join('')}
+    <tr class="tot"><td>รวม</td><td class="r">${f2(req)}</td><td class="r">${f2(apv)}</td><td class="r">${f2(cut)}</td><td class="r">${req?(cut/req*100).toFixed(2):'0.00'}%</td></tr></tbody></table></div>`;
+  $('#apvSum').innerHTML = tbl('สรุปตามงบรายจ่าย','account_tree',rowsOf(GORDER,p=>p.group)) + tbl('สรุปตามส่วนราชการ','apartment',rowsOf(DEPTS,p=>p.dept));
+}
+async function apvApproveList(L){
+  const t=nowISO(), by=S.user.username||S.user.id;
+  await busy(()=>DB.batchSet(COL.prop,L.map(p=>[p.id,{status:'approved',amountApproved:apvVal(p),reviewedAt:t,reviewedBy:by,updatedAt:t,updatedBy:by}])));
+  L.forEach(p=>{ delete S.apv[p.id]; S.asel.delete(p.id); });
+  await reloadProps(); renderApvTable(); updApv();
+}
+
+/* ===================== CHECK ===================== */
+function vCheck(){
+  const items = activeItems(), exp = sumBy(items,p=>p._v);
+  const byG = GORDER.map(g=>{ const L=items.filter(p=>p.group===g); return [g,L.length,sumBy(L,p=>num(p.prev2)),sumBy(L,p=>num(p.prev1)),sumBy(L,p=>p._v)]; });
+  const byD = DEPTS.map(d=>{ const L=S.proposals.filter(p=>p.dept===d); return [d,L.length,sumBy(L,p=>num(p.amount)),sumBy(L.filter(p=>p.status==='approved'),finalAmt)]; });
+  return `<div class="grid2" style="margin-top:0">
+    <div class="card"><h3><span class="ms">rule</span>ผลการตรวจสอบตามระเบียบและหลักเกณฑ์</h3>${computeChecks().map(chkHTML).join('')}</div>
+    <div>
+      <div class="card"><h3><span class="ms">account_tree</span>สรุปตามงบรายจ่าย</h3><table class="t"><thead><tr><th>งบ</th><th class="r">รายการ</th><th class="r">จ่ายจริง ${S.year-2}</th><th class="r">ประมาณการ ${S.year-1}</th><th class="r">ประมาณการ ${S.year}</th></tr></thead><tbody>
+      ${byG.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${f2(r[2])}</td><td class="r">${f2(r[3])}</td><td class="r">${f2(r[4])}</td></tr>`).join('')}
+      <tr class="tot"><td>รวม</td><td class="r">${items.length}</td><td class="r">${f2(sumBy(byG,r=>r[2]))}</td><td class="r">${f2(sumBy(byG,r=>r[3]))}</td><td class="r">${f2(exp)}</td></tr></tbody></table></div>
+      <div class="card" style="margin-top:16px"><h3><span class="ms">apartment</span>สรุปตามส่วนราชการ</h3><table class="t"><thead><tr><th>ส่วนราชการ</th><th class="r">รายการ</th><th class="r">ขอตั้ง</th><th class="r">อนุมัติแล้ว</th></tr></thead><tbody>
+      ${byD.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${f2(r[2])}</td><td class="r">${f2(r[3])}</td></tr>`).join('')}</tbody></table></div>
+    </div></div>`;
+}
+
+/* ===================== เอกสาร งป.1 / งป.2 ===================== */
+const C = (v,o={}) => ({v,...o});
+const N = (v,o={}) => ({v:num(v),n:1,al:'r',bd:1,...o});
+const fmtN = (v,dec) => { v=num(v); if (Math.abs(v)<0.005) return ''; return dec===2 || Math.abs(v%1)>0.004 ? f2(v) : Math.round(v).toLocaleString('en-US'); };
+const deptSigner = d => S.settings.deptSigners?.[d] || {name:'',title:''};
+const shortDept = d => String(d).replace('กองสาธารณสุขและสิ่งแวดล้อม','กองสาธารณสุขฯ').replace('กองยุทธศาสตร์และงบประมาณ','กองยุทธศาสตร์ฯ');
+function docItems(dept){
+  return S.proposals.filter(p => (dept==='__all' || p.dept===dept) && (S.d.amt==='apv' ? p.status==='approved' : p.status!=='rejected'))
+    .map(p=>({...p,_v: S.d.amt==='apv' ? finalAmt(p) : num(p.amount)})).sort(cmpProp);
+}
+function ngp1Model(label, items, sg){
+  const Y=S.year, NC=5, rows=[];
+  rows.push([C('แบบสรุปคำของบประมาณตามแผนงาน',{cs:NC,t1:1})]);
+  rows.push([C(`เพื่อประกอบการพิจารณาขอตั้งงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ.${Y}`,{cs:NC,b:1,al:'c'})]);
+  rows.push([C(`ชื่อหน่วยงาน   ${label}`,{cs:NC,b:1})]);
+  rows.push(['ลำดับที่','แผนงาน','งาน','จำนวนเงินที่ขอตั้ง (บาท)','หมายเหตุ'].map(t=>C(t,{bd:1,th:1})));
+  const plans = S.d.allPlans ? PLAN_ORDER : PLAN_ORDER.filter(p=>items.some(x=>x.plan===p));
+  let tot = 0;
+  plans.forEach(plan=>{ const no=PLAN_ORDER.indexOf(plan)+1, ws=PLANS[plan], pi=items.filter(x=>x.plan===plan), ps=sumBy(pi,x=>x._v); tot+=ps;
+    ws.forEach((w,i)=>{ const r=[]; if(i===0) r.push(C(String(no),{bd:1,al:'c',rs:ws.length}), C(plan.replace(/^แผนงาน/,''),{bd:1,rs:ws.length}));
+      r.push(C(`${no}.${i+1} ${w}`,{bd:1}), N(sumBy(pi.filter(x=>x.work===w),x=>x._v),{dec:2}), C('',{bd:1})); rows.push(r); });
+    rows.push([C(`รวม${plan}`,{cs:3,bd:1,b:1,tot:1}), N(ps,{dec:2,b:1,tot:1}), C('',{bd:1,tot:1})]); });
+  rows.push([C('รวมทั้งสิ้น ทุกแผนงาน',{cs:3,bd:1,b:1,tot:1}), N(tot,{dec:2,b:1,tot:1}), C('',{bd:1,tot:1})]);
+  if (S.d.note) { rows.push([C('',{cs:NC})]); rows.push([C('หมายเหตุ',{b:1}), C('ให้สำนัก/กอง จัดทำเฉพาะแผนงานที่เกี่ยวข้อง ถ้าไม่เกี่ยวข้องให้ตัดออก',{cs:4})]); }
+  rows.push([C('',{cs:NC})],[C('',{cs:NC})]);
+  rows.push([C('',{cs:2}), C('(ลงชื่อ)..................................................ผู้เสนอขอตั้งงบประมาณ',{cs:3,al:'c'})]);
+  rows.push([C('',{cs:2}), C(`(${sg.name||'..................................................'})`,{cs:3,al:'c'})]);
+  rows.push([C('',{cs:2}), C(`ตำแหน่ง ${sg.title||'..................................................'}`,{cs:3,al:'c'})]);
+  return {name:`งป1 ${shortDept(label)}`, cols:[55,150,300,150,110], rows};
+}
+function ngp2Models(label, items, sg){
+  const Y=S.year, out=[];
+  for (const plan of PLAN_ORDER) {
+    const pi=items.filter(x=>x.plan===plan); if(!pi.length) continue;
+    const ws=PLANS[plan].filter(w=>pi.some(x=>x.work===w)), nW=ws.length, NC=nW+3, rows=[];
+    const blanks = k => Array.from({length:k},()=>C('',{bd:1}));
+    const amt = (L,o={}) => [...ws.map(w=>N(sumBy(L.filter(x=>x.work===w),x=>x._v),{dec:0,...o})), N(sumBy(L,x=>x._v),{dec:0,...o})];
+    rows.push([C('แบบสรุปคำของบประมาณรายจ่าย',{cs:NC,t1:1})]);
+    rows.push([C(`เพื่อประกอบการพิจารณาขอตั้งงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ. ${Y}`,{cs:NC,b:1,al:'c'})]);
+    rows.push([C(`หน่วยงาน   ${label}`,{bd:1,th:1,al:'l'}), C(plan,{bd:1,th:1,cs:nW}), C('รวมจำนวนเงิน',{bd:1,th:1,rs:3}), C('ยุทธศาสตร์ชาติ ยุทธศาสตร์จังหวัด แผนพัฒนาท้องถิ่น',{bd:1,th:1,rs:3})]);
+    rows.push([C('งาน',{bd:1,th:1,al:'l'}), ...ws.map(w=>C(w,{bd:1,th:1}))]);
+    rows.push([C('งบ',{bd:1,th:1,al:'l'}), ...ws.map(()=>C('',{bd:1,th:1}))]);
+    for (const g of GORDER) { const gi=pi.filter(x=>x.group===g); if(!gi.length) continue;
+      rows.push([C(g,{bd:1,b:1}), ...blanks(nW+2)]);
+      for (const c of Object.keys(BUDGET[g])) { const ci=gi.filter(x=>x.cat===c); if(!ci.length) continue;
+        rows.push([C(c,{bd:1,b:1,ind:1}), ...blanks(nW+2)]);
+        for (const t of BUDGET[g][c]) { const ti=ci.filter(x=>x.type===t); if(!ti.length) continue;
+          const projs=[...new Set(ti.map(x=>x.project))], showT = g!=='งบบุคลากร' && projs.some(pr=>pr!==t);
+          if (showT) rows.push([C(t,{bd:1,ind:2}), ...blanks(nW+2)]);
+          projs.forEach(pr=>{ const L=ti.filter(x=>x.project===pr), st=[...new Set(L.map(x=>x.strategy||x.planRef).filter(Boolean))].join('\n');
+            rows.push([C(pr,{bd:1,ind:showT?3:2}), ...amt(L), C(st,{bd:1})]); }); } }
+      rows.push([C(`รวม${g}`,{bd:1,b:1,tot:1}), ...amt(gi,{b:1,tot:1}), C('',{bd:1,tot:1})]); }
+    rows.push([C('รวมงานทั้งสิ้น',{bd:1,b:1,al:'c',tot:1}), ...amt(pi,{b:1,tot:1}), C('',{bd:1,tot:1})]);
+    rows.push([C('',{cs:NC})],[C('',{cs:NC})]);
+    rows.push([C(''), C('(ลงชื่อ)..................................................',{cs:nW+2,al:'c'})]);
+    rows.push([C(''), C(`(${sg.name||'..................................................'})`,{cs:nW+2,al:'c'})]);
+    rows.push([C(''), C(`ตำแหน่ง ${sg.title||'..................................................'}`,{cs:nW+2,al:'c'})]);
+    out.push({name:`งป2 ${shortDept(label)}-${plan.replace(/^แผนงาน/,'')}`, cols:[330, ...ws.map(()=>nW>2?100:125), 120, 170], rows, land:nW>2});
+  }
+  return out;
+}
+function docDept(){ return role()==='dept' && S.user.dept ? S.user.dept : S.d.dept; }
+function buildDocs(){
+  const d=docDept(), k=S.d.kind, models=[];
+  const list = d==='__each' ? DEPTS.filter(x=>docItems(x).length) : [d];
+  for (const dp of list) {
+    const items = docItems(dp); if (!items.length && !S.d.allPlans) continue;
+    const label = dp==='__all' ? `${S.settings.orgName} (รวมทุกส่วนราชการ)` : dp;
+    const sg = dp==='__all' ? {name:S.settings.signers.analystName, title:S.settings.signers.analystTitle} : deptSigner(dp);
+    if (k!=='2') models.push(ngp1Model(label, items, sg));
+    if (k!=='1') models.push(...ngp2Models(label, items, sg));
+  }
+  return models;
+}
+function cellCls(c){ return [c.bd?'bd':'', c.th?'th':'', c.b?'b':'', c.al==='c'?'c':c.al==='r'?'r':c.al==='l'?'l':'', c.it?'it':'', c.t1?'t1':'', c.tot?'tot':''].filter(Boolean).join(' '); }
+function renderModel(m){
+  const W = sumBy(m.cols,x=>x);
+  let h = `<table class="ngt"><colgroup>${m.cols.map(w=>{ const p=(w/W*100).toFixed(2); return `<col width="${p}%" style="width:${p}%">`; }).join('')}</colgroup>`;
+  for (const row of m.rows) h += '<tr>' + row.map(c=>{ const cl=cellCls(c), txt = c.n ? fmtN(c.v,c.dec) : esc(c.v??'').replace(/\n/g,'<br>');
+    return `<td${cl?` class="${cl}"`:''}${c.cs>1?` colspan="${c.cs}"`:''}${c.rs>1?` rowspan="${c.rs}"`:''}${c.ind?` style="padding-left:${5+c.ind*16}px"`:''}>${txt||'&nbsp;'}</td>`; }).join('') + '</tr>';
+  return h + '</table>';
+}
+const xesc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\r?\n/g,'&#10;');
+function toXLS(models){
+  const reg = new Map();
+  const sid = c => { const bold = c.b||c.th||c.t1 ? 1 : 0, al = c.al || (c.th||c.t1 ? 'c' : 'l');
+    const key = [c.bd?1:0,bold,al,c.ind||0,c.n?(c.dec===2?2:0):-1,c.th?'th':c.tot?'tot':'',c.t1?18:16,c.it?1:0].join('|');
+    if (!reg.has(key)) reg.set(key,{id:'s'+(reg.size+1),bd:c.bd,bold,al,ind:c.ind||0,nf:c.n?(c.dec===2?'#,##0.00':'#,##0'):'',bg:c.th?'#F2F2F2':c.tot?'#F7F7F7':'',sz:c.t1?18:16,it:c.it,th:c.th});
+    return reg.get(key).id; };
+  const used = new Set(), sname = n => { let s=String(n).replace(/[\[\]:*?\/\\]/g,' ').trim().slice(0,31), b=s, i=2; while(used.has(s)){ const sf=` (${i++})`; s=b.slice(0,31-sf.length)+sf; } used.add(s); return s; };
+  const sheets = models.map(m=>{
+    const occ=[]; let rx='';
+    m.rows.forEach((row,r)=>{ occ[r]=occ[r]||new Set(); let col=0, cx='';
+      row.forEach(c=>{ while(occ[r].has(col)) col++; const cs=c.cs||1, rs=c.rs||1;
+        for (let rr=r+1; rr<r+rs; rr++){ occ[rr]=occ[rr]||new Set(); for(let cc=col;cc<col+cs;cc++) occ[rr].add(cc); }
+        const v = c.n ? (Math.abs(num(c.v))>0.004 ? `<Data ss:Type="Number">${num(c.v)}</Data>` : '') : (isF(c.v) ? `<Data ss:Type="String">${xesc(c.v)}</Data>` : '');
+        cx += `<Cell ss:Index="${col+1}"${cs>1?` ss:MergeAcross="${cs-1}"`:''}${rs>1?` ss:MergeDown="${rs-1}"`:''} ss:StyleID="${sid(c)}">${v}</Cell>`;
+        col += cs; });
+      rx += `<Row ss:AutoFitHeight="1">${cx}</Row>`; });
+    return `<Worksheet ss:Name="${xesc(sname(m.name))}"><Table>${m.cols.map(w=>`<Column ss:AutoFitWidth="0" ss:Width="${Math.round(w*0.75)}"/>`).join('')}${rx}</Table>
+<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><PageSetup>${m.land?'<Layout x:Orientation="Landscape"/>':''}<Header x:Margin="0.3"/><Footer x:Margin="0.3"/><PageMargins x:Bottom="0.5" x:Left="0.7" x:Right="0.4" x:Top="0.6"/></PageSetup><FitToPage/><Print><FitHeight>0</FitHeight><ValidPrinterInfo/><PaperSizeIndex>9</PaperSizeIndex></Print></WorksheetOptions></Worksheet>`; }).join('\n');
+  const B = '<Borders>' + ['Bottom','Left','Right','Top'].map(p=>`<Border ss:Position="${p}" ss:LineStyle="Continuous" ss:Weight="1"/>`).join('') + '</Borders>';
+  const styles = [...reg.values()].map(s=>`<Style ss:ID="${s.id}"><Alignment ss:Horizontal="${s.al==='r'?'Right':s.al==='c'?'Center':'Left'}" ss:Vertical="${s.th?'Center':'Top'}" ss:WrapText="1"${s.ind?` ss:Indent="${s.ind*2}"`:''}/>${s.bd?B:''}<Font ss:FontName="TH Sarabun New" x:CharSet="222" ss:Size="${s.sz}"${s.bold?' ss:Bold="1"':''}${s.it?' ss:Italic="1"':''}/>${s.bg?`<Interior ss:Color="${s.bg}" ss:Pattern="Solid"/>`:''}${s.nf?`<NumberFormat ss:Format="${s.nf}"/>`:''}</Style>`).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40"><Styles><Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Vertical="Top"/><Font ss:FontName="TH Sarabun New" x:CharSet="222" ss:Size="16"/></Style>${styles}</Styles>\n${sheets}\n</Workbook>`;
+}
+function toWord(models){
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>งป.1 งป.2 ${S.year}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>@page WordSection1{size:21cm 29.7cm;margin:1.5cm 1.3cm 1.3cm 2cm}div.WordSection1{page:WordSection1}body{font-family:'TH Sarabun New';font-size:16pt;mso-bidi-font-family:'TH Sarabun New';mso-bidi-font-size:16pt}${ngpCSS(1,true)}</style></head>
+<body><div class="WordSection1">${models.map((m,i)=>(i?'<br clear="all" style="page-break-before:always">':'')+renderModel(m)).join('')}</div></body></html>`;
+}
+function docFileBase(){ const d=docDept(), k=S.d.kind; const lb = d==='__each' ? 'ทุกส่วนราชการ' : d==='__all' ? 'รวมทั้งเทศบาล' : d;
+  return `${k==='1'?'งป1':k==='2'?'งป2':'งป1-งป2'}_${lb}_${S.year}${S.d.amt==='apv'?'_หลังพิจารณา':''}`; }
+function vDocs(){
+  const d=S.d, own=role()==='dept' && S.user.dept, dept=docDept(), models=buildDocs();
+  const single = !String(dept).startsWith('__'), sg = single ? deptSigner(dept) : null, canSg = single && (isBudget() || S.user.dept===dept);
+  const dsel = own ? `<select class="inp" disabled><option>${esc(S.user.dept)}</option></select>` :
+    `<select class="inp" onchange="App.setD('dept',this.value)">${DEPTS.map(x=>`<option value="${esc(x)}" ${d.dept===x?'selected':''}>${esc(x)}</option>`).join('')}<option value="__each" ${d.dept==='__each'?'selected':''}>ทุกส่วนราชการ (แยกชุดละหน่วยงาน)</option><option value="__all" ${d.dept==='__all'?'selected':''}>รวมทั้งเทศบาล</option></select>`;
+  return `<div class="card no-print" style="margin-bottom:16px">
+    <div class="toolbar" style="margin:0">
+      <select class="inp" onchange="App.setD('kind',this.value)">
+        <option value="both" ${d.kind==='both'?'selected':''}>งป.1 + งป.2</option>
+        <option value="1" ${d.kind==='1'?'selected':''}>งป.1 แบบสรุปคำของบประมาณตามแผนงาน</option>
+        <option value="2" ${d.kind==='2'?'selected':''}>งป.2 แบบสรุปคำของบประมาณรายจ่าย</option></select>
+      ${dsel}
+      <select class="inp" onchange="App.setD('amt',this.value)">
+        <option value="req" ${d.amt==='req'?'selected':''}>ยอดที่ขอตั้ง (ทุกรายการยกเว้นไม่อนุมัติ)</option>
+        <option value="apv" ${d.amt==='apv'?'selected':''}>ยอดหลังพิจารณา (เฉพาะที่อนุมัติแล้ว)</option></select>
+      <label class="chip"><input type="checkbox" ${d.allPlans?'checked':''} onchange="App.setD('allPlans',this.checked)">งป.1 แสดงทุกแผนงาน</label>
+      <label class="chip"><input type="checkbox" ${d.note?'checked':''} onchange="App.setD('note',this.checked)">หมายเหตุท้าย งป.1</label>
+    </div>
+    <div class="toolbar" style="margin:10px 0 0">
+      ${S.thFont?`<span class="badge b-ok">✓ ฟอนต์ TH Sarabun New พร้อมใช้งาน</span>`:`<span class="badge b-warn">⚠ ไม่พบฟอนต์ TH Sarabun New ในเครื่อง — แสดงตัวอย่างด้วย Sarabun (ไฟล์ Word/Excel ยังกำหนดเป็น TH Sarabun New)</span>`}
+      <span class="small muted">${models.length} หน้า/ชีต</span><span style="flex:1"></span>
+      <button class="btn" onclick="App.docWord()" ${models.length?'':'disabled'}><span class="ms">description</span>Word (.doc)</button>
+      <button class="btn" onclick="App.docExcel()" ${models.length?'':'disabled'}><span class="ms">table_view</span>Excel (.xls)</button>
+      <button class="btn pri" onclick="window.print()" ${models.length?'':'disabled'}><span class="ms">print</span>พิมพ์ / บันทึก PDF</button>
+    </div>
+    ${canSg?`<div class="toolbar" style="margin:10px 0 0"><span class="small muted">ผู้เสนอขอตั้งงบประมาณ:</span>
+      <input class="inp" id="ds_n" value="${esc(sg.name)}" placeholder="ชื่อ-สกุล" style="min-width:240px">
+      <input class="inp" id="ds_t" value="${esc(sg.title)}" placeholder="ตำแหน่ง" style="min-width:280px">
+      <button class="btn sm" onclick="App.saveDeptSigner()"><span class="ms">save</span>บันทึกผู้เสนอ</button></div>`:''}
+  </div>
+  ${models.length ? `<div class="ngp">${models.map(m=>`<div class="page">${renderModel(m)}</div>`).join('')}</div>` : `<div class="hint">ไม่มีรายการคำของบประมาณตามเงื่อนไขที่เลือก</div>`}`;
+}
+
+/* ===================== SETTINGS ===================== */
+function vSettings(){
+  const s=S.settings, sg=s.signers, y=curYear(), ed=isBudget(), ad=isAdmin();
+  return `<div class="grid2" style="margin-top:0">
+  <div class="card"><h3><span class="ms">badge</span>ข้อมูลองค์กร ผู้ลงนาม และฟอนต์เอกสาร</h3><div class="fg c2">
+    ${fi('s_org','ชื่อองค์กร',s.orgName,'text','full',!ed)}${fi('s_dist','อำเภอ',s.district,'text','',!ed)}${fi('s_prov','จังหวัด',s.province,'text','',!ed)}
+    ${[['analyst','ผู้จัดทำ'],['finDir','ผู้อำนวยการกองคลัง'],['clerk','ปลัดเทศบาล'],['mayor','นายกเทศมนตรี'],['gov','ผู้ว่าราชการจังหวัด/ผู้อนุมัติ']].map(([k,l])=>fi('sg_'+k+'Name',`${l} – ชื่อ`,sg[k+'Name'],'text','',!ed)+fi('sg_'+k+'Title',`${l} – ตำแหน่ง`,sg[k+'Title'],'text','',!ed)).join('')}
+    ${fi('s_font','URL ไฟล์ฟอนต์ TH Sarabun New ตัวปกติ (.woff2/.woff/.ttf) — ไม่บังคับ',s.fontUrl,'text','full',!ed)}
+    ${fi('s_fontb','URL ไฟล์ฟอนต์ TH Sarabun New ตัวหนา — ไม่บังคับ',s.fontBoldUrl,'text','full',!ed)}
+    <div class="full small muted">สถานะฟอนต์ในเครื่องนี้: ${S.thFont?'<b style="color:var(--ok)">พบ TH Sarabun New</b>':'<b style="color:#B45309">ไม่พบ TH Sarabun New</b> — ติดตั้งฟอนต์ในเครื่อง หรือระบุ URL ไฟล์ฟอนต์ที่โฮสต์ไว้ (เช่น Firebase Hosting)'}</div>
+  </div>${ed?`<div style="margin-top:12px"><button class="btn pri" onclick="App.saveSettings()"><span class="ms">save</span>บันทึก</button></div>`:''}</div>
+  <div>
+    <div class="card"><h3><span class="ms">event_note</span>ปีงบประมาณ พ.ศ. ${S.year}</h3>
+      <div class="fg c2"><div><label class="f">สถานะปีงบประมาณ</label><select class="inp" id="y_status" ${ed?'':'disabled'}>${YST.map(([k,v])=>`<option value="${k}" ${(y.status||'preparing')===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      ${ed?`<div style="align-self:end"><button class="btn pri" onclick="App.saveYearInfo()"><span class="ms">save</span>บันทึกสถานะ</button></div>`:''}</div>
+      <table class="t" style="margin-top:12px"><thead><tr><th>ปี</th><th>สถานะ</th><th></th></tr></thead><tbody>${S.years.map(x=>`<tr><td>พ.ศ. ${x.year}</td><td><span class="badge b-${x.status==='promulgated'?'ok':'info'}">${(YST.find(z=>z[0]===x.status)||YST[0])[1]}</span></td><td class="r">${x.year!==S.year?`<button class="btn sm" onclick="App.changeYear(${x.year})">เปิด</button>`:'<span class="muted small">กำลังใช้งาน</span>'}</td></tr>`).join('')}</tbody></table>
+      ${ed?`<div style="margin-top:12px"><button class="btn sec" onclick="App.createYear()"><span class="ms">add</span>สร้างปีงบประมาณใหม่</button></div>`:''}</div>
+    <div class="card" style="margin-top:16px"><h3><span class="ms">backup</span>สำรอง / นำเข้า / ส่งออกข้อมูล</h3>
+      <div class="toolbar"><button class="btn" onclick="App.exportJSON()"><span class="ms">download</span>สำรองข้อมูลปี ${S.year} (JSON)</button>
+      ${ad?`<button class="btn" onclick="App.importJSON()"><span class="ms">upload</span>กู้คืนจาก JSON</button>`:''}
+      <button class="btn" onclick="App.exportCSV()"><span class="ms">table_view</span>ส่งออกคำขอ (CSV)</button></div>
+      <div class="small muted">การเชื่อมต่อ: ${fdb?`Firebase Firestore (${FIREBASE_CONFIG.projectId})`:'โหมดสาธิต — LocalStorage'} · Collections: ${Object.values(COL).map(c=>`<code>${c}</code>`).join(', ')}</div></div>
+  </div></div>
+  <div class="card" style="margin-top:16px"><h3><span class="ms">draw</span>ผู้เสนอขอตั้งงบประมาณรายส่วนราชการ (ลงนามใน งป.1 / งป.2)</h3>
+    <table class="t"><thead><tr><th>ส่วนราชการ</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th></tr></thead><tbody>
+    ${DEPTS.map((d,i)=>{ const x=deptSigner(d); return `<tr><td>${esc(d)}</td><td><input class="inp" id="dsn_${i}" value="${esc(x.name)}" ${ed?'':'disabled'}></td><td><input class="inp" id="dst_${i}" value="${esc(x.title)}" ${ed?'':'disabled'}></td></tr>`; }).join('')}</tbody></table>
+    ${ed?`<div style="margin-top:12px"><button class="btn pri" onclick="App.saveDeptSigners()"><span class="ms">save</span>บันทึกผู้เสนอทั้งหมด</button></div>`:''}</div>
+  ${ad?`<div class="card" style="margin-top:16px"><h3><span class="ms">manage_accounts</span>ผู้ใช้งาน (ใช้ร่วมกับระบบโอนงบประมาณ)</h3>
+    <div class="toolbar"><button class="btn pri" onclick="App.openUser()"><span class="ms">person_add</span>เพิ่มผู้ใช้</button><span class="small muted">สิทธิ์ในระบบนี้เก็บในฟิลด์ <code>budgetRole</code> แยกจาก <code>role</code> ของระบบโอนงบประมาณ</span></div>
+    <div class="tbl-wrap" style="max-height:420px"><table class="t"><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อ-สกุล</th><th>ส่วนราชการ</th><th>สิทธิ์</th><th>สถานะ</th><th></th></tr></thead><tbody id="userBody"><tr><td colspan="6" class="c muted">กำลังโหลด…</td></tr></tbody></table></div></div>`:''}`;
+}
+let _users=[];
+async function aSettings(){ if(!isAdmin()) return;
+  try { _users = await DB.list(COL.users); } catch(e){ $('#userBody').innerHTML=`<tr><td colspan="6" class="c" style="color:var(--err)">โหลดผู้ใช้ไม่สำเร็จ: ${esc(e.message)}</td></tr>`; return; }
+  $('#userBody').innerHTML = _users.map(u=>{ const r=u.budgetRole||mapRole(u.role); return `<tr><td>${esc(u.username||u.id)}</td><td>${esc(u.displayName||u.name||'')}</td><td>${esc(u.dept||'-')}</td><td><span class="badge b-sec">${ROLES[r]}</span></td><td>${u.active===false?'<span class="badge b-err">ระงับ</span>':'<span class="badge b-ok">ใช้งาน</span>'}</td><td class="r"><button class="btn sm" onclick="App.openUser('${esc(u.id)}')"><span class="ms">edit</span></button></td></tr>`; }).join('') || `<tr><td colspan="6" class="c muted">ไม่มีผู้ใช้</td></tr>`; }
+function openUser(id){ const u = id ? _users.find(x=>x.id===id) : {active:true,budgetRole:'dept'}; if(!u) return;
+  modal(id?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้',`<div class="fg c2">${fi('u_name','ชื่อผู้ใช้ (username)',u.username||u.id||'','text','',!!id)}${fi('u_disp','ชื่อ-สกุล',u.displayName||u.name||'')}
+    <div><label class="f">ส่วนราชการ</label><select class="inp" id="u_dept"><option value="">—</option>${opts(DEPTS,u.dept)}</select></div>
+    <div><label class="f">สิทธิ์ในระบบงบประมาณ</label><select class="inp" id="u_role">${Object.entries(ROLES).map(([k,v])=>`<option value="${k}" ${(u.budgetRole||mapRole(u.role))===k?'selected':''}>${v}</option>`).join('')}</select></div>
+    ${fi('u_pw',id?'รหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)':'รหัสผ่าน (อย่างน้อย 8 ตัว)','','password')}
+    <div><label class="f">สถานะ</label><select class="inp" id="u_act"><option value="1" ${u.active!==false?'selected':''}>ใช้งาน</option><option value="0" ${u.active===false?'selected':''}>ระงับ</option></select></div></div>`,
+  {onOk: async()=>{ const un=$('#u_name').value.trim(), pw=$('#u_pw').value;
+    if(!un) { toast('กรอกชื่อผู้ใช้','err'); return false; }
+    if((!id && pw.length<8) || (pw && pw.length<8)) { toast('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร','err'); return false; }
+    const d={displayName:$('#u_disp').value.trim(),dept:$('#u_dept').value,budgetRole:$('#u_role').value,active:$('#u_act').value==='1',updatedAt:nowISO()};
+    if (pw) d.passwordHash = await sha256(pw);
+    if (!id) { if (await DB.get(COL.users,un)) { toast('มีชื่อผู้ใช้นี้แล้ว','err'); return false; } Object.assign(d,{username:un,role:d.budgetRole,createdAt:nowISO()}); }
+    await busy(()=>DB.set(COL.users, id||un, d)); toast('บันทึกผู้ใช้แล้ว'); aSettings(); }}); }
+
+/* ===================== ACTIONS ===================== */
+const CSV_COLS = [['id','รหัส'],['dept','ส่วนราชการ'],['side','ด้าน'],['plan','แผนงาน'],['work','งาน'],['group','งบ'],['cat','หมวด'],['type','ประเภท'],['project','รายการ/โครงการ'],['desc','คำชี้แจง'],['fund','แหล่งเงิน'],['planRef','อ้างอิงแผนพัฒนา'],['strategy','ยุทธศาสตร์'],['prev3','รายจ่ายจริงปีก่อน3ปี'],['prev2','รายจ่ายจริงปีก่อน2ปี'],['prev1','ประมาณการปีก่อน'],['amount','ขอตั้ง'],['amountApproved','อนุมัติ'],['status','สถานะ']];
+const App = window.App = {
+  go, closeModal, openProp, openPullFromPlan: openPullFromPlanModal, act, bulk, openUser,
+  setF(k,v){ S.f[k]=v; renderPropTable(); },
+  setAF(k,v){ S.af[k]=v; S.asel.clear(); renderApvTable(); updApv(); },
+  setD(k,v){ S.d[k]=v; go('docs'); },
+  apvSel(id,ch){ ch ? S.asel.add(id) : S.asel.delete(id); $('#apvSelN').textContent=S.asel.size; },
+  apvSelAll(ch){ aList().filter(p=>p.status!=='rejected').forEach(p=>ch?S.asel.add(p.id):S.asel.delete(p.id)); renderApvTable(); updApv(); },
+  apvSelDept(di,ch){ const d=S._adepts[di]; aList().filter(p=>p.dept===d && p.status!=='rejected').forEach(p=>ch?S.asel.add(p.id):S.asel.delete(p.id)); renderApvTable(); updApv(); },
+  apvInput(id,el){ const p=S.proposals.find(x=>x.id===id); if(!p) return; const req=num(p.amount); let v=num(el.value);
+    if (v>req) { v=req; el.value=req; toast('ยอดอนุมัติต้องไม่เกินยอดที่ขอตั้ง','warn'); }
+    if (v<0) { v=0; el.value=0; }
+    setApv(p,v); $('#ac_'+id).innerHTML=cutTxt(req-apvVal(p)); $('#ar_'+id).classList.toggle('chg', S.apv[id]!==undefined); updApv(); },
+  async apvTool(kind){
+    const sel=S.proposals.filter(p=>S.asel.has(p.id) && p.status!=='rejected');
+    if (kind!=='balance' && !sel.length) return toast('กรุณาเลือกรายการก่อน (ติ๊กช่องหน้ารายการ)','warn');
+    if (kind==='pct') { const k=num($('#apvPct').value); if(k<=0||k>=100) return toast('ระบุร้อยละ 1–99','err');
+      sel.forEach(p=>{ const nv=apvVal(p)*(1-k/100); setApv(p, nv>=1000 ? Math.floor(nv/100)*100 : Math.floor(nv)); }); toast(`ลด ${k}% แล้ว ${sel.length} รายการ (ยังไม่บันทึก)`); }
+    if (kind==='avg') { let c=0; sel.forEach(p=>{ const a=avgAct(p); if(a!=null && a>0 && apvVal(p)>a){ setApv(p, Math.ceil(a/100)*100); c++; } }); toast(c?`ปรับลงเท่าค่าเฉลี่ยจ่ายจริง ${c} รายการ (ยังไม่บันทึก)`:'ไม่มีรายการที่ขอสูงกว่าค่าเฉลี่ยจ่ายจริง', c?'ok':'warn'); }
+    if (kind==='reset') { sel.forEach(p=>setApv(p,num(p.amount))); toast('คืนยอดตามที่ขอแล้ว (ยังไม่บันทึก)'); }
+    if (kind==='balance') {
+      const act=S.proposals.filter(p=>p.status!=='rejected'), rev=sumBy(S.revenues,r=>num(r.amount));
+      if (!rev) return toast('ยังไม่มีประมาณการรายรับ','err');
+      const deficit=sumBy(act,apvVal)-rev; if (deficit<=0) return toast('งบประมาณสมดุลแล้ว ไม่ต้องตัดลด');
+      const pool=(sel.length?sel:aList().filter(p=>p.status!=='rejected')).filter(p=>!PROTECT_G.includes(p.group) && apvVal(p)>0), base=sumBy(pool,apvVal);
+      if (!base) return toast('ไม่มีรายการที่ตัดลดได้ (ยกเว้นงบบุคลากรและงบกลาง)','warn');
+      if (!await confirmBox(`ขาดดุล <b>${f2(deficit)}</b> บาท<br>จะเกลี่ยตัดลดตามสัดส่วนจาก <b>${pool.length}</b> รายการ${sel.length?'ที่เลือก':'ตามตัวกรอง'} (ยกเว้นงบบุคลากรและงบกลาง) ยอดรวม ${f2(base)} บาท ≈ ลด ${(Math.min(deficit/base,1)*100).toFixed(2)}% ต่อรายการ<br><span class="small muted">ระบบจะใส่ตัวเลขในช่องยอดอนุมัติให้ตรวจทานก่อนบันทึก</span>`,{danger:false,ok:'เกลี่ยตัดลด',title:'เกลี่ยตัดลดให้สมดุลรายรับ'})) return;
+      pool.forEach(p=>{ const v=apvVal(p), c=Math.min(v, Math.ceil(deficit*v/base/100)*100); setApv(p, v-c); });
+      if (base<deficit) toast(`ตัดได้สูงสุด ${f2(base)} บาท ยังขาดดุลอยู่ ต้องพิจารณางบบุคลากร/งบกลางเพิ่มเติม`,'warn'); else toast('เกลี่ยตัดลดแล้ว — ตรวจทานแล้วกด “บันทึกยอดที่ปรับ”');
+    }
+    renderApvTable(); updApv();
+  },
+  async apvSave(){ const e=Object.entries(S.apv); if(!e.length) return toast('ไม่มียอดที่ปรับ','warn'); const t=nowISO(), by=S.user.username||S.user.id;
+    await busy(()=>DB.batchSet(COL.prop,e.map(([id,v])=>[id,{amountApproved:v,reviewedAt:t,reviewedBy:by,updatedAt:t,updatedBy:by}])));
+    S.apv={}; await reloadProps(); renderApvTable(); updApv(); toast(`บันทึกยอดอนุมัติ ${e.length} รายการแล้ว`); },
+  apvCancel(){ if(!Object.keys(S.apv).length) return; S.apv={}; renderApvTable(); updApv(); toast('ยกเลิกการปรับแล้ว','warn'); },
+  async apvApprove(){ const L=S.proposals.filter(p=>S.asel.has(p.id) && p.status!=='rejected'); if(!L.length) return toast('กรุณาเลือกรายการที่จะอนุมัติ','warn');
+    const r=sumBy(L,p=>num(p.amount)), a=sumBy(L,apvVal), noAct=L.filter(p=>!hasActual(p)).length;
+    if (!await confirmBox(`อนุมัติ <b>${L.length}</b> รายการ<br>ยอดขอตั้ง ${f2(r)} บาท → ยอดอนุมัติ <b>${f2(a)}</b> บาท (ตัดลด ${f2(r-a)} บาท)${noAct?`<br><span style="color:#B45309">มี ${noAct} รายการที่ยังไม่กรอกรายจ่ายจริงย้อนหลัง</span>`:''}`,{danger:false,ok:'อนุมัติ'})) return;
+    await apvApproveList(L); toast(`อนุมัติ ${L.length} รายการแล้ว`); },
+  async apvOne(id){ const p=S.proposals.find(x=>x.id===id); if(!p) return; const q={...p,status:p.status==='rejected'?'submitted':p.status};
+    if (p.status==='rejected') { delete S.apv[id]; }
+    await apvApproveList([p.status==='rejected'?q:p]); toast(`อนุมัติ “${p.project}” ${f2(apvVal(q))} บาท`); },
+  async changeYear(y){ S.year=+y; S.settings.activeYear=S.year; await busy(loadYear); renderShell(); S.view==='approve'&&(S.apv={}); go(S.view); },
+  async refresh(){ await busy(async()=>{ S.years=(await DB.list(COL.years)).map(y=>({...y,year:+y.year})).sort((a,b)=>a.year-b.year); await loadYear(); }); renderShell(); go(S.view); toast('โหลดข้อมูลล่าสุดแล้ว'); },
+  logout(){ sessionStorage.removeItem('dkbud_uid'); location.reload(); },
+  async saveRevenues(){ const m={}; document.querySelectorAll('.rv').forEach(i=>{ (m[i.dataset.id] ||= {})[i.dataset.f] = i.dataset.f==='note' ? i.value : num(i.value); });
+    await busy(()=>DB.batchSet(COL.rev,Object.entries(m).map(([id,d])=>[id,{...d,updatedAt:nowISO()}]))); await reloadRevs(); toast('บันทึกประมาณการรายรับแล้ว'); go('revenue'); },
+  async revTemplate(){ const have=new Set(S.revenues.map(r=>r.source+'|'+r.cat+'|'+r.item)), arr=[];
+    for (const s in REV) for (const c in REV[s]) REV[s][c].forEach((it,i)=>{ if(!have.has(s+'|'+c+'|'+it)) arr.push([uid(),{year:S.year,source:s,cat:c,item:it,prev2:0,prev1:0,amount:0,note:'',order:i,createdAt:nowISO()}]); });
+    if (!arr.length) return toast('มีรายการครบตามแม่แบบแล้ว','warn');
+    await busy(()=>DB.batchSet(COL.rev,arr)); await reloadRevs(); toast(`เพิ่ม ${arr.length} รายการ`); go('revenue'); },
+  addRev(){ const srcs=Object.keys(REV);
+    modal('เพิ่มรายการรายรับ',`<div class="fg"><div><label class="f">ประเภทรายได้</label><select class="inp" id="r_src">${opts(srcs,srcs[0])}</select></div><div><label class="f">หมวด</label><select class="inp" id="r_cat"></select></div>${fi('r_item','ชื่อรายการ','')}</div>`,
+    {onOk:async()=>{ const it=$('#r_item').value.trim(); if(!it){ toast('กรอกชื่อรายการ','err'); return false; }
+      await busy(()=>DB.add(COL.rev,{year:S.year,source:$('#r_src').value,cat:$('#r_cat').value,item:it,prev2:0,prev1:0,amount:0,note:'',order:999,createdAt:nowISO()})); await reloadRevs(); go('revenue'); }});
+    const fc=()=>{$('#r_cat').innerHTML=opts(Object.keys(REV[$('#r_src').value]),'');}; $('#r_src').onchange=fc; fc(); },
+  async delRev(id){ const r=S.revenues.find(x=>x.id===id); if(!await confirmBox(`ลบรายการรายรับ “${esc(r?.item)}” ?`)) return; await busy(()=>DB.del(COL.rev,id)); await reloadRevs(); go('revenue'); },
+  async saveSettings(){ const v=id=>$('#'+id).value.trim(), sg={};
+    Object.keys(DEF_SIGNERS).forEach(k=>sg[k]=v('sg_'+k));
+    const d={orgName:v('s_org'),district:v('s_dist'),province:v('s_prov'),fontUrl:v('s_font'),fontBoldUrl:v('s_fontb'),signers:sg,activeYear:S.year,updatedAt:nowISO()};
+    await busy(async()=>{ await DB.set(COL.set,'main',d); S.settings={...S.settings,...d}; await setupFont(); }); toast('บันทึกแล้ว'); go('settings'); },
+  async saveDeptSigners(){ const ds={...S.settings.deptSigners}; DEPTS.forEach((d,i)=>{ ds[d]={name:$('#dsn_'+i).value.trim(),title:$('#dst_'+i).value.trim()}; });
+    await busy(()=>DB.set(COL.set,'main',{deptSigners:ds,updatedAt:nowISO()})); S.settings.deptSigners=ds; toast('บันทึกผู้เสนอขอตั้งงบประมาณแล้ว'); },
+  async saveDeptSigner(){ const d=docDept(); const ds={...S.settings.deptSigners,[d]:{name:$('#ds_n').value.trim(),title:$('#ds_t').value.trim()}};
+    await busy(()=>DB.set(COL.set,'main',{deptSigners:ds,updatedAt:nowISO()})); S.settings.deptSigners=ds; toast('บันทึกผู้เสนอแล้ว'); go('docs'); },
+  async saveYearInfo(){ const d={status:$('#y_status').value,updatedAt:nowISO()};
+    await busy(()=>DB.set(COL.years,String(S.year),{year:S.year,...d})); Object.assign(curYear(),d); renderShell(); toast('บันทึกสถานะปีงบประมาณแล้ว'); },
+  createYear(){ const ny=(S.years.at(-1)?.year||2569)+1;
+    modal('สร้างปีงบประมาณใหม่',`<div class="fg">${fi('ny_y','ปีงบประมาณ (พ.ศ.)',ny,'number')}<label class="chip"><input type="checkbox" id="ny_copy" checked>คัดลอกคำขอและรายรับจากปีก่อนหน้า</label><div class="hint">ยอดอนุมัติปีก่อน → ประมาณการปีก่อน · รายจ่ายจริงปี ${ny-2} → ช่องจ่ายจริงปี (ปี−3) · ช่องจ่ายจริงปี ${ny-2} ว่างไว้ให้ผู้ขอกรอก · สถานะ “ร่าง”</div></div>`,
+    {ok:'สร้าง',onOk:async()=>{ const y=Math.round(num($('#ny_y').value)); if(y<2560||y>2700){ toast('ปีไม่ถูกต้อง','err'); return false; }
+      if (S.years.some(x=>x.year===y)) { toast('มีปีนี้อยู่แล้ว','err'); return false; }
+      await busy(async()=>{ await DB.set(COL.years,String(y),{year:y,status:'preparing',createdAt:nowISO()});
+        if ($('#ny_copy').checked) { const src=y-1, t=nowISO(), by=S.user.username||S.user.id;
+          const ps=(await DB.list(COL.prop,{year:src})).filter(p=>p.status!=='rejected');
+          await DB.batchSet(COL.prop,ps.map(p=>[uid(),{...clean(p),year:y,prev3:isF(p.prev2)?num(p.prev2):null,prev2:null,prev1:finalAmt(p),amount:finalAmt(p),amountApproved:null,status:'draft',reviewNote:'',copiedFrom:p.id,createdAt:t,createdBy:by,updatedAt:t,updatedBy:by}]));
+          const rs=await DB.list(COL.rev,{year:src});
+          await DB.batchSet(COL.rev,rs.map(r=>[uid(),{...clean(r),year:y,prev2:0,prev1:num(r.amount),amount:num(r.amount),createdAt:t}])); }
+        S.years=(await DB.list(COL.years)).map(x=>({...x,year:+x.year})).sort((a,b)=>a.year-b.year); });
+      await App.changeYear(y); toast(`สร้างปีงบประมาณ ${y} แล้ว`); }}); },
+  docWord(){ const m=buildDocs(); if(!m.length) return; download(`${docFileBase()}.doc`,'\ufeff'+toWord(m),'application/msword'); },
+  docExcel(){ const m=buildDocs(); if(!m.length) return; download(`${docFileBase()}.xls`,toXLS(m),'application/vnd.ms-excel'); },
+  exportJSON(){ download(`donkaeo-budget-${S.year}-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({app:'donkaeo-budget',version:2,year:S.year,exportedAt:nowISO(),settings:S.settings,yearDoc:curYear(),revenues:S.revenues,proposals:S.proposals},null,2),'application/json'); },
+  async importJSON(){ const t=await pickFile('.json'); if(!t) return; let d; try{ d=JSON.parse(t); }catch{ return toast('ไฟล์ JSON ไม่ถูกต้อง','err'); }
+    if (d.app!=='donkaeo-budget') return toast('ไม่ใช่ไฟล์สำรองของระบบนี้','err');
+    if (!await confirmBox(`กู้คืนข้อมูลปี ${d.year}: รายรับ ${d.revenues?.length||0} รายการ, คำขอ ${d.proposals?.length||0} รายการ (รหัสซ้ำจะถูกเขียนทับ)`)) return;
+    await busy(async()=>{ await DB.set(COL.years,String(d.year),{...clean(d.yearDoc||{}),year:+d.year});
+      await DB.batchSet(COL.rev,(d.revenues||[]).map(r=>[r.id||uid(),{...r,year:+d.year}]));
+      await DB.batchSet(COL.prop,(d.proposals||[]).map(p=>[p.id||uid(),{...p,year:+d.year}])); });
+    await App.refresh(); },
+  exportCSV(){ const L = S.view==='proposals' ? filtered() : [...S.proposals].sort(cmpProp);
+    const rows=[CSV_COLS.map(c=>c[1]), ...L.map(p=>CSV_COLS.map(c=>p[c[0]]??''))];
+    download(`คำขอตั้งงบประมาณ-${S.year}.csv`,'\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8'); },
+  async importCSV(){ const t=await pickFile('.csv'); if(!t) return; const rows=parseCSV(t); const hd=(rows.shift()||[]).map(h=>h.trim());
+    const ix=CSV_COLS.map(([k,l])=>[k,hd.indexOf(l)]), ok=[], bad=[], by=S.user.username||S.user.id, tm=nowISO();
+    rows.forEach((r,n)=>{ if(r.every(c=>!String(c).trim())) return; const o={}; ix.forEach(([k,i])=>{ if(i>=0) o[k]=String(r[i]??'').trim(); });
+      ['prev3','prev2'].forEach(k=>o[k]=isF(o[k])?num(o[k]):null); ['prev1','amount'].forEach(k=>o[k]=num(o[k]));
+      o.amountApproved = isF(o.amountApproved) ? num(o.amountApproved) : null;
+      autoMatch(o); if(!o.status||!ST[o.status]) o.status='draft';
+      if(!isAdmin()) { o.status = ['draft','submitted'].includes(o.status) ? o.status : 'draft'; o.amountApproved=null; }
+      if(role()==='dept') { o.dept=S.user.dept; o.status='draft'; }
+      if(!PLANS[o.plan]?.includes(o.work) || !TYPE_IDX[o.type] || !o.project) { bad.push(n+2); return; }
+      const ex = o.id && S.proposals.some(p=>p.id===o.id), id = ex ? o.id : uid(); delete o.id;
+      ok.push([id,{...o,year:S.year,updatedAt:tm,updatedBy:by,...(ex?{}:{createdAt:tm,createdBy:by})}]); });
+    if(!await confirmBox(`นำเข้า ${ok.length} รายการ${bad.length?` (ข้าม ${bad.length} แถวที่ไม่ถูกต้อง: แถว ${bad.slice(0,10).join(', ')}${bad.length>10?'…':''})`:''}?`,{danger:false})) return;
+    await busy(()=>DB.batchSet(COL.prop,ok)); await reloadProps(); refreshView(); toast(`นำเข้า ${ok.length} รายการแล้ว`); }
+};
+
+/* ===================== DEMO SEED (Local mode) ===================== */
+async function seedDemo(){
+  const h = await sha256('1234'), ha = await sha256('admin1234'), t=nowISO();
+  await LocalDB.set('users','admin',{username:'admin',displayName:'ผู้ดูแลระบบ',budgetRole:'admin',dept:'กองยุทธศาสตร์และงบประมาณ',passwordHash:ha,active:true});
+  await LocalDB.set('users','budget',{username:'budget',displayName:'นักวิเคราะห์นโยบายและแผน',budgetRole:'budget',dept:'กองยุทธศาสตร์และงบประมาณ',passwordHash:h,active:true});
+  await LocalDB.set('users','engineer',{username:'engineer',displayName:'ผู้อำนวยการกองช่าง',budgetRole:'dept',dept:'กองช่าง',passwordHash:h,active:true});
+  await LocalDB.set('users','audit',{username:'audit',displayName:'นางสาวสิรินาถ  อินทสโร',budgetRole:'dept',dept:'หน่วยตรวจสอบภายใน',passwordHash:h,active:true});
+  await LocalDB.set(COL.years,'2570',{year:2570,status:'reviewing',createdAt:t});
+  const RV={"ภาษีที่ดินและสิ่งปลูกสร้าง":[2380000,2400000,2500000],"ภาษีป้าย":[850000,880000,900000],"ค่าธรรมเนียมเก็บและขนมูลฝอย":[1150000,1180000,1200000],"ดอกเบี้ย":[290000,300000,300000],"ภาษีมูลค่าเพิ่มตาม พ.ร.บ. กำหนดแผนฯ":[8700000,8800000,9000000],"ภาษีมูลค่าเพิ่มตาม พ.ร.บ. จัดสรรรายได้ฯ":[3350000,3400000,3500000],"ภาษีธุรกิจเฉพาะ":[1420000,1450000,1500000],"ภาษีสรรพสามิต":[5800000,5900000,6000000],"ค่าธรรมเนียมจดทะเบียนสิทธิและนิติกรรมตามประมวลกฎหมายที่ดิน":[3900000,3950000,4000000],"เงินอุดหนุนทั่วไป":[17200000,17500000,18000000]};
+  const ra=[]; for (const s in REV) for (const c in REV[s]) REV[s][c].forEach((it,i)=>{ const v=RV[it]||[0,0,0]; ra.push([uid(),{year:2570,source:s,cat:c,item:it,prev2:v[0],prev1:v[1],amount:v[2],note:'',order:i,createdAt:t}]); });
+  await LocalDB.batchSet(COL.rev,ra);
+  const TR='รายจ่ายเกี่ยวเนื่องกับการปฏิบัติราชการที่ไม่เข้าลักษณะรายจ่ายงบรายจ่ายอื่น ๆ';
+  const P=[
+    ['สำนักปลัดเทศบาล','งานบริหารทั่วไป','เงินเดือนนายก/รองนายกองค์กรปกครองส่วนท้องถิ่น','เงินเดือนนายกเทศมนตรี/รองนายกเทศมนตรี','จำนวน 3 อัตรา',1018080,1018080,1018080,1018080,'approved',''],
+    ['สำนักปลัดเทศบาล','งานบริหารทั่วไป','เงินเดือนข้าราชการ หรือพนักงานส่วนท้องถิ่น','เงินเดือนพนักงาน','เพื่อจ่ายเป็นเงินเดือนพนักงานเทศบาล สังกัดสำนักปลัดเทศบาล',5850000,6120000,6300000,6500000,'submitted',''],
+    ['สำนักปลัดเทศบาล','งานบริหารทั่วไป',TR,'ค่าใช้จ่ายในการเดินทางไปราชการในและนอกราชอาณาจักร','ตามระเบียบกระทรวงมหาดไทย',248000,265000,300000,400000,'submitted',''],
+    ['สำนักปลัดเทศบาล','งานบริหารทั่วไป','ครุภัณฑ์คอมพิวเตอร์หรืออิเล็กทรอนิกส์','จัดซื้อเครื่องคอมพิวเตอร์โน้ตบุ๊ก สำหรับงานประมวลผล','จำนวน 1 เครื่อง ตามเกณฑ์ราคากลางฯ',null,null,0,24000,'draft',''],
+    ['สำนักปลัดเทศบาล','งานบริหารทั่วไป','ค่าไฟฟ้า','ค่าไฟฟ้า','',1580000,1690000,1750000,1800000,'approved',''],
+    ['กองคลัง','งานบริหารงานคลัง','เงินเดือนข้าราชการ หรือพนักงานส่วนท้องถิ่น','เงินเดือนพนักงาน','สังกัดกองคลัง',2890000,3010000,3100000,3200000,'submitted',''],
+    ['กองช่าง','งานก่อสร้าง','ค่าก่อสร้างสิ่งสาธารณูปโภค','โครงการก่อสร้างถนนคอนกรีตเสริมเหล็ก ซอย 5 หมู่ที่ 3','กว้าง 4 ม. ยาว 350 ม. หนา 0.15 ม.',0,0,0,1250000,'submitted','แผนพัฒนาท้องถิ่น (พ.ศ. 2566–2570) หน้า 112 ลำดับที่ 8'],
+    ['กองการศึกษา','งานระดับก่อนวัยเรียนและประถมศึกษา','วัสดุงานบ้านงานครัว','ค่าอาหารเสริม (นม)','',1310000,1380000,1420000,1450000,'approved',''],
+    ['กองการศึกษา','งานระดับก่อนวัยเรียนและประถมศึกษา','เงินอุดหนุนส่วนราชการ','อุดหนุนอาหารกลางวันโรงเรียนสังกัด สพฐ.','',2150000,2200000,2250000,2300000,'approved',''],
+    ['กองสวัสดิการสังคม','งบกลาง','เบี้ยยังชีพผู้สูงอายุ','เบี้ยยังชีพผู้สูงอายุ','',16900000,17600000,18000000,18500000,'approved',''],
+    ['กองสวัสดิการสังคม','งบกลาง','เบี้ยยังชีพความพิการ','เบี้ยยังชีพความพิการ','',3800000,3950000,4100000,4200000,'approved',''],
+    ['กองคลัง','งบกลาง','เงินสำรองจ่าย','เงินสำรองจ่าย','',640000,820000,1500000,1500000,'approved',''],
+    ['กองคลัง','งบกลาง','เงินสมทบกองทุนประกันสังคม','เงินสมทบกองทุนประกันสังคม','',590000,610000,630000,650000,'approved',''],
+    ['กองสาธารณสุขและสิ่งแวดล้อม','งานกำจัดขยะมูลฝอยและสิ่งปฏิกูล','รายจ่ายเพื่อให้ได้มาซึ่งบริการ','ค่าจ้างเหมากำจัดขยะมูลฝอย','',3250000,3400000,3500000,3900000,'submitted',''],
+    ['หน่วยตรวจสอบภายใน','งานควบคุมภายในและการตรวจสอบภายใน','เงินเดือนข้าราชการ หรือพนักงานส่วนท้องถิ่น','เงินเดือนพนักงาน','เพื่อจ่ายเป็นเงินเดือนพนักงานเทศบาล สังกัดหน่วยตรวจสอบภายใน',342000,355800,362000,375720,'submitted',''],
+    ['หน่วยตรวจสอบภายใน','งานควบคุมภายในและการตรวจสอบภายใน','ค่าเช่าบ้าน','ค่าเช่าบ้าน','',54000,60000,60000,60000,'submitted',''],
+    ['หน่วยตรวจสอบภายใน','งานควบคุมภายในและการตรวจสอบภายใน',TR,'ค่าใช้จ่ายในการเดินทางไปราชการในและนอกราชอาณาจักร','',7850,8420,10000,10000,'submitted',''],
+    ['หน่วยตรวจสอบภายใน','งานควบคุมภายในและการตรวจสอบภายใน',TR,'ค่าลงทะเบียนในการฝึกอบรม','',3500,4000,5000,5000,'submitted','']
+  ];
+  await LocalDB.batchSet(COL.prop,P.map(([dept,work,type,project,desc,prev3,prev2,prev1,amount,status,planRef],i)=>[uid(),autoMatch({year:2570,dept,work,plan:WORK_IDX[work],type,project,desc,prev3,prev2,prev1,amount,status,planRef,strategy:'',fund:'เงินรายได้',amountApproved:status==='approved'?amount:null,createdAt:new Date(Date.now()+i).toISOString(),createdBy:'seed'})]));
+}
+
+/* ===================== INIT ===================== */
+(async function init(){
+  $('#lgMode').innerHTML = fdb ? `เชื่อมต่อ Firebase: <b>${FIREBASE_CONFIG.projectId}</b>` : `<b style="color:#B45309">โหมดสาธิต</b>: ยังไม่ได้ใส่ apiKey จริง ข้อมูลเก็บใน LocalStorage<br>ทดลอง: <code>admin / admin1234</code> (อนุมัติงบ), <code>budget / 1234</code>, <code>audit / 1234</code> (หน่วยตรวจสอบภายใน), <code>engineer / 1234</code>`;
+  try {
+    if (!fdb && !(await LocalDB.any('users'))) await seedDemo();
+    if (!(await DB.any(COL.users))) $('#lgSetup').hidden = false;
+    const sid = sessionStorage.getItem('dkbud_uid');
+    if (sid) { const u = await DB.get(COL.users, sid); if (u && u.active!==false) return startSession(u); }
+  } catch(e){ console.warn(e); }
+})();
+
+
+/* ===================== ALL PLAN DATA PIPELINE: ดึงโครงการจาก ผ.02 (ระบบ 2) & 10 หมู่บ้าน (ระบบ 1) เข้าสู่ e-Budget ===================== */
+let _ebPlanCache = [];
+
+async function fetchPlanProjectsForBudget() {
+  const out = [];
+  let planData = null;
+  try { planData = JSON.parse(localStorage.getItem('donkaeo_plan_cache_v2') || 'null'); } catch(e){}
+  try {
+    const r = await fetch('https://donkaeo-plan71-75-default-rtdb.asia-southeast1.firebasedatabase.app/donkaeo_plan.json');
+    if (r.ok) {
+      const j = await r.json();
+      if (j) {
+        planData = {
+          issues: (j.plan_tables && j.plan_tables.data && j.plan_tables.data.issues) || (planData && planData.issues) || [],
+          p02: (j.plan_p02 && j.plan_p02.data) || (planData && planData.p02) || {},
+          supp_p02: (j.plan_supp_p02 && j.plan_supp_p02.data) || (planData && planData.supp_p02) || {}
+        };
+      }
+    }
+  } catch(e){}
+
+  if (planData) {
+    const issues = Array.isArray(planData.issues) ? planData.issues : Object.values(planData.issues || {});
+    const p02 = planData.p02 || {};
+    issues.forEach((iss, idx) => {
+      const issTitle = (iss && iss.issue) || ('ประเด็นการพัฒนาที่ ' + (idx + 1));
+      const arr = Array.isArray(p02['issue_' + idx]) ? p02['issue_' + idx] : Object.values(p02['issue_' + idx] || {});
+      arr.forEach((p, pi) => {
+        if (!p || !p.project) return;
+        const buds = p.budget || {};
+        const yrAmt = num(buds[S.year]) || num(buds['2571']) || Object.values(buds).map(num).find(v => v > 0) || 0;
+        out.push({
+          uid: `m_${idx}_${pi}`,
+          label: `[ผ.02 ฉบับแรก ประเด็นที่ ${idx+1} ลำดับ ${pi+1}] ${p.project} (${f2(yrAmt)} บ.)`,
+          project: p.project,
+          desc: [p.obj ? 'วัตถุประสงค์: ' + p.obj : '', p.target ? 'เป้าหมาย: ' + p.target : '', p.result ? 'ผลที่คาดว่าจะได้รับ: ' + p.result : ''].filter(Boolean).join('\n'),
+          amount: yrAmt,
+          dept: DEPTS.includes(p.dept) ? p.dept : (S.user?.dept || DEPTS[0]),
+          planRef: `แผนพัฒนาท้องถิ่น (พ.ศ. 2571–2575) ประเด็นที่ ${idx+1} ลำดับที่ ${pi+1}`,
+          strategy: issTitle
+        });
+      });
+
+      const supp = planData.supp_p02 || {};
+      Object.keys(supp).forEach(ek => {
+        if (!/^ed_\d+$/.test(ek)) return;
+        const edNo = ek.replace('ed_', '');
+        const sArr = Array.isArray(supp[ek]['issue_' + idx]) ? supp[ek]['issue_' + idx] : Object.values((supp[ek] || {})['issue_' + idx] || {});
+        sArr.forEach((p, pi) => {
+          if (!p || !p.project) return;
+          const buds = p.budget || {};
+          const yrAmt = num(buds[S.year]) || num(buds['2571']) || Object.values(buds).map(num).find(v => v > 0) || 0;
+          out.push({
+            uid: `s_${edNo}_${idx}_${pi}`,
+            label: `[ผ.02 เพิ่มเติม ฉ.${edNo} ประเด็นที่ ${idx+1} ลำดับ ${pi+1}] ${p.project} (${f2(yrAmt)} บ.)`,
+            project: p.project,
+            desc: [p.obj ? 'วัตถุประสงค์: ' + p.obj : '', p.target ? 'เป้าหมาย: ' + p.target : ''].filter(Boolean).join('\n'),
+            amount: yrAmt,
+            dept: DEPTS.includes(p.dept) ? p.dept : (S.user?.dept || DEPTS[0]),
+            planRef: `แผนพัฒนาท้องถิ่น (พ.ศ. 2571–2575) เพิ่มเติม ฉบับที่ ${edNo} ประเด็นที่ ${idx+1} ลำดับที่ ${pi+1}`,
+            strategy: issTitle
+          });
+        });
+      });
+    });
+  }
+
+  // ดึงจากความต้องการ 10 หมู่บ้าน (infra-needs.html)
+  try {
+    const infLocal = JSON.parse(localStorage.getItem('donkaew_localplan_v4') || '[]');
+    if (Array.isArray(infLocal)) {
+      infLocal.forEach(r => {
+        if (!r || !r.title) return;
+        const dName = (Array.isArray(r.components) && r.components[0] && r.components[0].dept) || (r.cat === 'infra' ? 'กองช่าง' : 'สำนักปลัดเทศบาล');
+        out.push({
+          uid: `inf_${r.id}`,
+          label: `[ความต้องการ หมู่ที่ ${r.village} ลำดับ ${r.priority||1}] ${r.title} (${f2(r.budget)} บ.)`,
+          project: r.title,
+          desc: [r.reason ? 'เหตุผลความจำเป็น: ' + r.reason : '', r.qtyDesc ? 'ปริมาณงาน: ' + r.qtyDesc : ''].filter(Boolean).join('\n'),
+          amount: num(r.budget),
+          dept: DEPTS.includes(dName) ? dName : 'กองช่าง',
+          planRef: `บัญชีความต้องการหมู่ที่ ${r.village} ลำดับที่ ${r.priority||1} (ปี ${r.year})`,
+          strategy: 'การพัฒนาโครงสร้างพื้นฐานและครุภัณฑ์ตามความต้องการของหมู่บ้าน'
+        });
+      });
+    }
+  } catch(e){}
+
+  return out;
+}
+
+async function bindPlanPickerInModal(fillWork, fillCat) {
+  const sel = $('#f_planPicker'), btn = $('#f_applyPlanProj');
+  if (!sel || !btn) return;
+  _ebPlanCache = await fetchPlanProjectsForBudget();
+  if (!_ebPlanCache.length) {
+    sel.innerHTML = '<option value="">— ยังไม่มีโครงการในระบบแผนพัฒนาท้องถิ่น (ผ.02) หรือระบบ 10 หมู่บ้าน —</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">— เลือกโครงการจากแผนพัฒนาท้องถิ่น (ผ.02) หรือความต้องการ 10 หมู่บ้าน (' + _ebPlanCache.length + ' รายการ) —</option>' +
+    _ebPlanCache.map(x => `<option value="${esc(x.uid)}">${esc(x.label)}</option>`).join('');
+
+  btn.onclick = () => {
+    const uid = sel.value;
+    if (!uid) return toast('กรุณาเลือกโครงการจากรายการก่อน', 'warn');
+    const item = _ebPlanCache.find(x => x.uid === uid);
+    if (!item) return;
+    $('#f_project').value = item.project;
+    $('#f_desc').value = item.desc;
+    $('#f_amount').value = item.amount;
+    $('#f_ref').value = item.planRef;
+    $('#f_strat').value = item.strategy;
+    if (!$('#f_prev3').value) $('#f_prev3').value = 0;
+    if (!$('#f_prev2').value) $('#f_prev2').value = 0;
+    if (!$('#f_prev1').value) $('#f_prev1').value = 0;
+    if (DEPTS.includes(item.dept) && !$('#f_dept').disabled) {
+      $('#f_dept').value = item.dept;
+      const d = DEPT_DEFAULT[item.dept];
+      if (d) { $('#f_plan').value = d[0]; fillWork(); $('#f_work').value = d[1]; }
+    }
+    $('#f_auto').click();
+    toast('ดึงข้อมูลโครงการ งบประมาณ และเลขหน้าอ้างอิงแผนพัฒนาฯ เรียบร้อยแล้ว');
+  };
+}
+
+async function openPullFromPlanModal() {
+  const list = await fetchPlanProjectsForBudget();
+  if (!list.length) return toast('ไม่พบโครงการในระบบแผนพัฒนาท้องถิ่น (ผ.02) หรือความต้องการ 10 หมู่บ้าน', 'warn');
+  modal('📥 ดึงโครงการจากแผนพัฒนาท้องถิ่น (ผ.02) มาตั้งงบประมาณรายจ่ายประจำปี ' + S.year, `
+    <div class="hint" style="margin-bottom:12px">เลือกรายการโครงการจากแผนพัฒนาท้องถิ่น (ผ.02) หรือบัญชีความต้องการ 10 หมู่บ้าน ระบบจะจับคู่หมวดรายจ่าย แผนงาน/งาน และเติมช่องอ้างอิงแผนพัฒนาท้องถิ่นให้อัตโนมัติ</div>
+    <div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <label class="chip" style="cursor:pointer"><input type="checkbox" onchange="document.querySelectorAll('.eb-imp-chk').forEach(c=>c.checked=this.checked)"> เลือกทั้งหมด (${list.length} โครงการ)</label>
+      <span class="small muted">ปีงบประมาณเป้าหมาย: พ.ศ. ${S.year}</span>
+    </div>
+    <div style="max-height:380px;overflow:auto;border:1px solid var(--line);border-radius:var(--r)">
+      <table class="t"><thead><tr><th style="width:36px"></th><th>โครงการ / อ้างอิงแผน</th><th>ส่วนราชการ</th><th class="r">งบตามแผน (บาท)</th></tr></thead>
+      <tbody>${list.map(x => `<tr>
+        <td><input type="checkbox" class="eb-imp-chk" value="${esc(x.uid)}"></td>
+        <td><div class="proj">${esc(x.project)}</div><div class="small muted">${esc(x.planRef)}</div></td>
+        <td><span class="badge b-sec">${esc(x.dept)}</span></td>
+        <td class="r"><b>${f2(x.amount)}</b></td>
+      </tr>`).join('')}</tbody></table>
+    </div>
+  `, { wide: true, ok: '📥 นำเข้าเป็นคำขอตั้งงบประมาณ', onOk: async () => {
+    const chks = [...document.querySelectorAll('.eb-imp-chk:checked')].map(c => c.value);
+    if (!chks.length) { toast('กรุณาติ๊กเลือกโครงการอย่างน้อย 1 รายการ', 'warn'); return false; }
+    const picked = list.filter(x => chks.includes(x.uid));
+    const by = S.user.username || S.user.id, tm = nowISO();
+    const batch = picked.map(x => {
+      const def = DEPT_DEFAULT[x.dept] || ['แผนงานเคหะและชุมชน', 'งานไฟฟ้าและประปา'];
+      const t = suggestType(x.project + ' ' + x.desc) || 'ค่าก่อสร้างสิ่งสาธารณูปโภค';
+      const rec = autoMatch({
+        year: S.year, dept: x.dept, plan: def[0], work: def[1],
+        type: t, project: x.project, desc: x.desc,
+        fund: 'เงินรายได้', planRef: x.planRef, strategy: x.strategy,
+        prev3: 0, prev2: 0, prev1: 0, amount: num(x.amount),
+        amountApproved: null, status: 'draft', createdAt: tm, createdBy: by, updatedAt: tm, updatedBy: by
+      });
+      return [uid(), rec];
+    });
+    await busy(() => DB.batchSet(COL.prop, batch));
+    await reloadProps();
+    refreshView();
+    toast(`นำเข้าโครงการจากแผนพัฒนาท้องถิ่นจำนวน ${batch.length} รายการเรียบร้อยแล้ว`);
+  }});
+}
+
+/* --- All Plan SSO Bridge --- */
+(function(){
+  async function applyEbSSO(u) {
+    if (!u || !u.perms || u.perms.ebudget === "none") return;
+    const usr = {
+      id: u.uid, username: u.email || u.uid, displayName: u.name,
+      dept: u.dept, role: u.perms.ebudget, budgetRole: u.perms.ebudget,
+      passwordHash: u.passwordHash || "", active: true
+    };
+    try { await DB.set(COL.users, u.uid, usr); } catch(err){}
+    if (!S.user || S.user.id !== u.uid || S.user.budgetRole !== u.perms.ebudget) {
+      await startSession(usr);
+    }
+  }
+  const saved = JSON.parse(localStorage.getItem("allplan_session_v1") || "null");
+  if (saved) setTimeout(() => applyEbSSO(saved), 200);
+  window.addEventListener("message", e => {
+    if (e.data && e.data.type === "ALLPLAN_SSO") applyEbSSO(e.data.user);
+  });
+})();
+</script>
+</body>
+</html>
